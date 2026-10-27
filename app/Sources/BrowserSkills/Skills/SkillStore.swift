@@ -115,6 +115,8 @@ final class SkillStore: ObservableObject {
         reload()
     }
 
+    deinit { sqlite3_close_v2(db) }
+
     // MARK: Skills and versions
 
     func reload() {
@@ -130,27 +132,44 @@ final class SkillStore: ObservableObject {
         let json = String(data: try JSONEncoder().encode(workflow), encoding: .utf8)!
         let now = Date().timeIntervalSince1970
         let skillID: Int64
+        exec("BEGIN")
         if let existing = skills.first(where: { $0.name == workflow.name }) {
-            guard existing.origin == workflow.origin else { throw StoreError.conflict("skill \(workflow.name) already exists for \(existing.origin)") }
+            guard existing.origin == workflow.origin else {
+                exec("ROLLBACK")
+                throw StoreError.conflict("skill \(workflow.name) already exists for \(existing.origin)")
+            }
             skillID = existing.id
             run("UPDATE skills SET title=? WHERE id=?", [workflow.title, skillID])
         } else {
-            run("INSERT INTO skills (name, title, origin, created) VALUES (?, ?, ?, ?)", [workflow.name, workflow.title, workflow.origin, now])
+            guard run("INSERT INTO skills (name, title, origin, created) VALUES (?, ?, ?, ?)", [workflow.name, workflow.title, workflow.origin, now]) else {
+                exec("ROLLBACK")
+                throw StoreError.failed("could not create skill \(workflow.name): \(lastError)")
+            }
             skillID = sqlite3_last_insert_rowid(db)
         }
         let next = (query("SELECT MAX(version) FROM versions WHERE skill_id=?", [skillID]) { $0.isNull(0) ? 0 : Int($0.int64(0)) }.first ?? 0) + 1
-        run("INSERT INTO versions (skill_id, version, workflow, status, compiler, created) VALUES (?, ?, ?, ?, ?, ?)",
-            [skillID, next, json, VersionStatus.candidate.rawValue, compiler, now])
+        guard run("INSERT INTO versions (skill_id, version, workflow, status, compiler, created) VALUES (?, ?, ?, ?, ?, ?)",
+                  [skillID, next, json, VersionStatus.candidate.rawValue, compiler, now]) else {
+            exec("ROLLBACK")
+            throw StoreError.failed("could not store version \(next) of \(workflow.name): \(lastError)")
+        }
+        exec("COMMIT")
         reload()
-        return versions(skillID: skillID).first { $0.version == next }!
+        guard let version = versions(skillID: skillID).first(where: { $0.version == next }) else {
+            throw StoreError.failed("stored version \(next) of \(workflow.name) does not decode")
+        }
+        return version
     }
 
+    /// Versions whose stored workflow no longer decodes (schema drift) are skipped rather than crashing the app.
     func versions(skillID: Int64) -> [SkillVersion] {
-        query("SELECT id, skill_id, version, workflow, status, compiler, created FROM versions WHERE skill_id=? ORDER BY version DESC", [skillID]) { s in
-            SkillVersion(id: s.int64(0), skillID: s.int64(1), version: Int(s.int64(2)),
-                         workflow: (try? JSONDecoder().decode(Workflow.self, from: Data(s.text(3).utf8)))!,
-                         status: VersionStatus(rawValue: s.text(4)) ?? .candidate, compiler: s.text(5), created: s.date(6))
-        }
+        query("SELECT id, skill_id, version, workflow, status, compiler, created FROM versions WHERE skill_id=? ORDER BY version DESC", [skillID]) { s -> SkillVersion? in
+            guard let workflow = try? JSONDecoder().decode(Workflow.self, from: Data(s.text(3).utf8)) else {
+                NSLog("BrowserSkills: skipping undecodable version %lld of skill %lld", s.int64(2), s.int64(1)); return nil
+            }
+            return SkillVersion(id: s.int64(0), skillID: s.int64(1), version: Int(s.int64(2)), workflow: workflow,
+                                status: VersionStatus(rawValue: s.text(4)) ?? .candidate, compiler: s.text(5), created: s.date(6))
+        }.compactMap { $0 }
     }
 
     func setStatus(_ status: VersionStatus, skillID: Int64, version: Int) {
@@ -242,9 +261,11 @@ final class SkillStore: ObservableObject {
     // MARK: SQLite plumbing
 
     enum StoreError: LocalizedError {
-        case conflict(String)
-        var errorDescription: String? { switch self { case .conflict(let m): return m } }
+        case conflict(String), failed(String)
+        var errorDescription: String? { switch self { case .conflict(let m), .failed(let m): return m } }
     }
+
+    private var lastError: String { String(cString: sqlite3_errmsg(db)) }
 
     static func json<T: Encodable>(_ value: T) -> String { String(data: (try? JSONEncoder().encode(value)) ?? Data("null".utf8), encoding: .utf8)! }
     static func decode<T: Decodable>(_ text: String) -> T? { try? JSONDecoder().decode(T.self, from: Data(text.utf8)) }
@@ -275,10 +296,12 @@ final class SkillStore: ObservableObject {
         return stmt
     }
 
-    private func run(_ sql: String, _ args: [Any?]) {
-        guard let stmt = prepare(sql, args) else { return }
+    @discardableResult
+    private func run(_ sql: String, _ args: [Any?]) -> Bool {
+        guard let stmt = prepare(sql, args) else { return false }
         defer { sqlite3_finalize(stmt) }
-        if sqlite3_step(stmt) != SQLITE_DONE { NSLog("BrowserSkills sqlite step: %@", String(cString: sqlite3_errmsg(db))) }
+        guard sqlite3_step(stmt) == SQLITE_DONE else { NSLog("BrowserSkills sqlite step: %@", lastError); return false }
+        return true
     }
 
     private func query<T>(_ sql: String, _ args: [Any?] = [], _ row: (Row) -> T) -> [T] {

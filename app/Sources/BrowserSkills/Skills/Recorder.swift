@@ -73,7 +73,9 @@ final class Recorder: ObservableObject {
     func observe(_ action: RecordedAction) {
         if teaching, !picking { actions.append(action) }
         guard !teaching, let origin = URL(string: action.url).flatMap(Workflow.origin(of:)) else { return }
-        if origin != episodeOrigin { closeEpisode(); episodeOrigin = origin; episodeStart = action.url }
+        if origin != episodeOrigin { closeEpisode(); episodeOrigin = origin }
+        // After an idle close on the same site the next action opens a new episode starting on its page.
+        if episodeStart == nil { episodeStart = action.url }
         episode.append(action)
         scheduleClose()
     }
