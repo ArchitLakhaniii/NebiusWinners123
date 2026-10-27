@@ -99,15 +99,16 @@ struct Workflow: Codable, Hashable {
                 // The example may keep the URL on origin while another input would not; the host is never a template.
                 if Self.authority(of: raw).contains("{{") { out.append("\(at): url has a template in its scheme or host: \(raw)") }
             case .fill, .select, .click, .waitFor, .press:
-                guard let target = step.target, !target.selector.isEmpty else {
-                    if step.kind != .press { out.append("\(at): missing target") }
-                    continue
-                }
-                // The executor tries fallbacks when the selector misses, so they are constrained the same way.
-                if let knownSelectors {
-                    for selector in [target.selector] + target.fallbacks where !knownSelectors.contains(selector) {
-                        out.append("\(at): selector was not observed in the recording: \(selector)")
+                // A press may omit its target (the executor uses the focused element), but every other kind needs one.
+                if let target = step.target, !target.selector.isEmpty {
+                    // The executor tries fallbacks when the selector misses, so they are constrained the same way.
+                    if let knownSelectors {
+                        for selector in [target.selector] + target.fallbacks where !knownSelectors.contains(selector) {
+                            out.append("\(at): selector was not observed in the recording: \(selector)")
+                        }
                     }
+                } else if step.kind != .press {
+                    out.append("\(at): missing target")
                 }
             }
             if let t = step.timeoutMs, !(0...Self.maxTimeoutMs).contains(t) { out.append("\(at): timeoutMs must be 0-\(Self.maxTimeoutMs)") }

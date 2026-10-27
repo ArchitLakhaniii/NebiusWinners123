@@ -88,8 +88,19 @@ final class ValidatorTests: XCTestCase {
 
     func testDuplicateInputNamesAreReportedNotFatal() throws {
         var w = try valid()
+        XCTAssertEqual(w.steps[0].kind, .navigate, "the navigate case is where duplicate names used to trap")
         w.inputs.append(w.inputs[0])
         XCTAssertTrue(w.problems().contains("duplicate input names"))
+    }
+
+    func testPressWithoutTargetOrKeyIsReported() throws {
+        var w = try valid()
+        w.steps.append(WorkflowStep(kind: .press, url: nil, target: nil, value: nil, key: nil, timeoutMs: nil))
+        let at = "step \(w.steps.count) (press)"
+        XCTAssertTrue(w.problems().contains("\(at): missing key"))
+        XCTAssertFalse(w.problems().contains("\(at): missing target"))
+        w.steps[w.steps.count - 1].key = "Enter"
+        XCTAssertFalse(w.problems().contains { $0.hasPrefix(at) })
     }
 
     func testNavigateExampleWithSpacesStillValidates() throws {
