@@ -237,4 +237,7 @@ struct PickedOutput: Codable, Hashable, Identifiable {
     var selector: String
     var sample: String
     var many: Bool
+    /// Both selectors the picker found, so the list toggle can switch between them.
+    var singleSelector: String? = nil
+    var listSelector: String? = nil
 }

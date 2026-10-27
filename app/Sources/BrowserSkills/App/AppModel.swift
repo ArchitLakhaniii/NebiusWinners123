@@ -173,8 +173,10 @@ final class ParkingWindow {
         window.isReleasedWhenClosed = false
         window.ignoresMouseEvents = true
         window.contentView = NSView(frame: NSRect(x: 0, y: 0, width: 1280, height: 900))
-        window.orderBack(nil)
     }
+
+    /// Ordered after the main window exists; an early visible window stops SwiftUI from opening its own.
+    func order() { window.orderBack(nil) }
 
     func park(_ view: NSView) {
         guard let content = window.contentView else { return }

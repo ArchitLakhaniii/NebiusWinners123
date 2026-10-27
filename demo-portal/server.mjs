@@ -30,14 +30,20 @@ function inventory(q) {
   });
 }
 
-const page = (title, body) => `<!doctype html><html><head><meta charset="utf-8"><title>${esc(title)} · Northwind</title>
-<style>body{font:15px -apple-system,system-ui,sans-serif;max-width:760px;margin:40px auto;padding:0 20px;color:#1d1d1f}
-nav a{margin-right:16px;color:#76b900;font-weight:600;text-decoration:none}h1{font-size:26px}form{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
-input,select,button{font:inherit;padding:8px 10px;border:1px solid #ccc;border-radius:8px}button{background:#76b900;color:#fff;border:0;font-weight:600;cursor:pointer}
-.card{border:1px solid #e5e5e5;border-radius:12px;padding:16px;margin:12px 0}dt{color:#666;font-size:13px}dd{margin:0 0 10px;font-size:17px;font-weight:600}
-table{border-collapse:collapse;width:100%}td,th{text-align:left;padding:8px;border-bottom:1px solid #eee}</style></head>
+const page = (title, body) => `<!doctype html><html><head><meta charset="utf-8"><title>${title === 'Northwind' ? 'Northwind' : esc(title) + ' · Northwind'}</title>
+<style>:root{color-scheme:light}body{font:15px -apple-system,system-ui,sans-serif;margin:0;color:#1d1f23;background:#fafaf9}
+nav{display:flex;align-items:center;gap:24px;padding:0 36px;height:56px;border-bottom:1px solid #e6e5e2;background:#fff}
+nav a{color:#5c6066;font-weight:500;text-decoration:none;font-size:14px}nav a:first-child{color:#1d1f23;font-weight:600;font-size:16px;margin-right:12px}
+main{max-width:760px;margin:0 auto;padding:36px 36px 48px}h1{font-size:26px;margin:0 0 16px}label{color:#5c6066;font-size:14px}
+form{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:16px 0 20px}
+input,select,button{font:inherit;padding:8px 12px;border:1px solid #d6d5d1;border-radius:8px;background:#fff}input:focus,select:focus{outline:2px solid #2f5a7a;outline-offset:-1px}
+button{background:#2f5a7a;color:#fff;border:0;font-weight:600;cursor:pointer;padding:9px 16px}
+.card{border:1px solid #e6e5e2;border-radius:12px;padding:4px 20px;margin:12px 0;background:#fff}dl{margin:0}dt{color:#5c6066;font-size:14px;display:inline-block;width:180px}
+dd{display:inline-block;width:calc(100% - 184px);margin:0;font-size:17px;font-weight:600;vertical-align:top}dt,dd{padding:12px 0;border-bottom:1px solid #eeede9}dt:last-of-type,dd:last-of-type{border-bottom:0}
+table{border-collapse:collapse;width:100%}td,th{text-align:left;padding:10px 8px;border-bottom:1px solid #eeede9}th{color:#5c6066;font-weight:500;font-size:13px}
+.note{color:#9a9ea5;font-size:12px;margin-top:40px}</style></head>
 <body><nav><a href="/">Northwind</a><a href="/orders">Order status</a><a href="/flights">Flight status</a><a href="/inventory">Inventory</a></nav>
-<h1>${esc(title)}</h1>${body}<p style="color:#999;font-size:12px;margin-top:40px">Demo data changes every minute.</p></body></html>`;
+<main><h1>${esc(title)}</h1>${body}<p class="note">Demo data changes every minute.</p></main></body></html>`;
 
 const routes = {
   '/': () => page('Northwind', `<p>Three lookups people repeat every day. Do one twice in BrowserSkills and it will offer to cache it as a skill.</p>

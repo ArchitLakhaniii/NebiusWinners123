@@ -134,10 +134,9 @@ struct SkillRow: View {
                     Text("skill_\(skill.name)").font(.system(size: 11, design: .monospaced)).foregroundStyle(.tertiary)
                 }
                 Spacer()
-                if let active {
+                if active != nil {
                     StatusLabel(text: "Verified", color: Theme.accent)
                     if !expanded, let n = runCount(), n > 0 { Text("\(n) run\(n == 1 ? "" : "s")").font(.system(size: 11.5)).foregroundStyle(.tertiary) }
-                    _ = active
                 } else if let v = versions.first {
                     StatusLabel(text: statusText(v.status), color: Theme.warning)
                 }
@@ -275,7 +274,11 @@ struct TeachPanel: View {
                             TextField("name", text: $p.name).textFieldStyle(.plain).font(.system(size: 11.5, design: .monospaced)).frame(width: 90)
                             Text(p.sample).font(.system(size: 12.5)).lineLimit(1).foregroundStyle(.secondary)
                             Spacer()
-                            Toggle("list", isOn: $p.many).toggleStyle(.checkbox).font(.system(size: 11)).foregroundStyle(.secondary)
+                            Toggle("list", isOn: Binding(get: { p.many }, set: { on in
+                                p.many = on
+                                if let s = on ? p.listSelector : p.singleSelector { p.selector = s }
+                            }))
+                            .toggleStyle(.checkbox).font(.system(size: 11)).foregroundStyle(.secondary).disabled(p.listSelector == nil)
                         }
                         .padding(.horizontal, 10).frame(height: 30).background(RoundedRectangle(cornerRadius: Theme.rowRadius).fill(Theme.fill))
                     }
@@ -416,15 +419,15 @@ struct SettingField<Content: View>: View {
     var note: String? = nil
     @ViewBuilder let content: Content
     var body: some View {
-        HStack(spacing: 10) {
-            VStack(alignment: .leading, spacing: 1) {
-                Text(label).font(.system(size: 12.5))
-                if let note { Text(note).font(.system(size: 11)).foregroundStyle(.tertiary) }
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(spacing: 6) {
+                Text(label).font(.system(size: 11.5, weight: .medium)).foregroundStyle(.secondary)
+                if let note { Text(note).font(.system(size: 11)).foregroundStyle(.tertiary).lineLimit(1) }
             }
-            .frame(width: 110, alignment: .leading)
-            content.textFieldStyle(.plain).font(.system(size: 12.5)).multilineTextAlignment(.trailing)
+            content.textFieldStyle(.plain).font(.system(size: 12.5)).lineLimit(1).truncationMode(.middle)
+                .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding(.horizontal, 10).frame(height: note == nil ? 32 : 40)
+        .padding(.horizontal, 10).padding(.vertical, 8)
         .background(RoundedRectangle(cornerRadius: Theme.rowRadius).fill(Theme.fill))
     }
 }

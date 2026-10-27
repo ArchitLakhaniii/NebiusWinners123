@@ -9,7 +9,7 @@ struct ContentView: View {
     @EnvironmentObject var model: AppModel
 
     var body: some View {
-        ZStack(alignment: .bottom) {
+        ZStack(alignment: .bottomLeading) {
             HStack(spacing: 0) {
                 Sidebar().frame(width: Theme.sidebarWidth)
                 if let tab = model.selected {
@@ -29,10 +29,9 @@ struct ContentView: View {
                         .transition(.move(edge: .trailing).combined(with: .opacity))
                 }
             }
-            SuggestionToast(recorder: model.recorder)
-                .padding(.bottom, Theme.inset + 10)
-                .padding(.leading, Theme.sidebarWidth)
+            ToastLayer(recorder: model.recorder)
         }
+        .ignoresSafeArea()
         .background(Material(material: .sidebar, blending: .behindWindow).ignoresSafeArea())
         .animation(Theme.quick, value: model.panelVisible)
     }
@@ -49,7 +48,7 @@ struct Sidebar: View {
                 Button { model.panelVisible.toggle() } label: { Image(systemName: "sidebar.right") }
                     .iconButton().foregroundStyle(.tertiary).help("Show panel (⌥⌘P)")
             }
-            .padding(.top, 14).padding(.trailing, 14).padding(.leading, 86)
+            .frame(height: 20).padding(.top, 8).padding(.trailing, 8).padding(.leading, 86)
             if let tab = model.selected {
                 NavRow(tab: tab)
                 AddressField(tab: tab)
@@ -199,26 +198,63 @@ struct SuggestionToast: View {
     var body: some View {
         if let s = recorder.suggestion {
             HStack(spacing: 12) {
-                Image(systemName: "repeat").font(.system(size: 13, weight: .medium)).foregroundStyle(Theme.accent)
-                    .frame(width: 32, height: 32).background(RoundedRectangle(cornerRadius: 8).fill(Theme.accent.opacity(0.14)))
+                Image(systemName: "repeat").font(.system(size: 13, weight: .semibold)).foregroundStyle(Theme.accent)
+                    .frame(width: 32, height: 32).background(RoundedRectangle(cornerRadius: 8).fill(Theme.accent.opacity(0.16)))
                 VStack(alignment: .leading, spacing: 3) {
-                    Text("You did this \(s.times) times on \(s.host)").font(.system(size: 13, weight: .semibold))
+                    Text("You did this \(s.times == 2 ? "twice" : "\(s.times) times") on \(s.host)").font(.system(size: 13, weight: .semibold))
                     Text(s.actions.prefix(3).map(\.summary).joined(separator: ", ")).font(.system(size: 12)).foregroundStyle(.secondary).lineLimit(1)
                 }
-                Spacer(minLength: 10)
+                Spacer(minLength: 16)
                 Button("Save as skill") { model.adoptSuggestion() }.buttonStyle(PillButtonStyle(primary: true))
                 Button("Not now") { recorder.dismissSuggestion() }.buttonStyle(PlainActionStyle())
             }
             .padding(.leading, 12).padding(.trailing, 14).padding(.vertical, 12)
-            .frame(maxWidth: 560)
-            .background(Material(material: .popover, blending: .withinWindow))
-            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .frame(maxWidth: 600)
+            .background(RoundedRectangle(cornerRadius: 12).fill(Color(nsColor: .windowBackgroundColor)))
             .overlay(RoundedRectangle(cornerRadius: 12).stroke(Theme.hairline, lineWidth: 1))
-            .shadow(color: .black.opacity(0.25), radius: 24, y: 10)
+            .shadow(color: .black.opacity(0.28), radius: 20, y: 8)
+            .padding(28)
             .transition(.move(edge: .bottom).combined(with: .opacity))
             .animation(Theme.quick, value: s.times)
         }
     }
+}
+
+struct ToastLayer: View {
+    @EnvironmentObject var model: AppModel
+    @ObservedObject var recorder: Recorder
+    var body: some View {
+        AboveWebContent(active: recorder.suggestion != nil) { SuggestionToast(recorder: recorder).environmentObject(model) }
+            .fixedSize()
+            .padding(.leading, Theme.sidebarWidth - 8)
+    }
+}
+
+/// Puts SwiftUI content in its own NSView so it sits above the WKWebView in AppKit hit testing.
+/// Without this, clicks on anything drawn over the page land in the web view.
+struct AboveWebContent<Content: View>: NSViewRepresentable {
+    let active: Bool
+    let content: Content
+    init(active: Bool, @ViewBuilder content: () -> Content) { self.active = active; self.content = content() }
+
+    func makeNSView(context: Context) -> PassthroughHostingView<Content> {
+        let host = PassthroughHostingView(rootView: content)
+        host.sizingOptions = .intrinsicContentSize
+        host.active = active
+        return host
+    }
+
+    func updateNSView(_ host: PassthroughHostingView<Content>, context: Context) {
+        host.rootView = content
+        host.active = active
+    }
+}
+
+final class PassthroughHostingView<Content: View>: NSHostingView<Content> {
+    var active = false
+    required init(rootView: Content) { super.init(rootView: rootView) }
+    @available(*, unavailable) required init?(coder: NSCoder) { fatalError("not used") }
+    override func hitTest(_ point: NSPoint) -> NSView? { active ? super.hitTest(point) : nil }
 }
 
 /// Hosts a tab's WKWebView. The agent web view goes back to its parking window when hidden.
@@ -230,6 +266,7 @@ struct WebViewHost: NSViewRepresentable {
         container.wantsLayer = true
         attach(tab.webView, to: container)
         context.coordinator.tab = tab
+        DispatchQueue.main.async { container.window?.makeFirstResponder(tab.webView) }
         return container
     }
 
