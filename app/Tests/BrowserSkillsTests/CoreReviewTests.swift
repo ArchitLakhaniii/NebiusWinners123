@@ -155,7 +155,7 @@ final class RecorderEpisodeTests: XCTestCase {
     }
 }
 
-final class SkillStoreTests: XCTestCase {
+final class SkillStoreRobustnessTests: XCTestCase {
     @MainActor
     func testUndecodableStoredVersionIsSkippedNotFatal() throws {
         let dir = tempDirectory()
