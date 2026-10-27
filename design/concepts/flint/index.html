@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="en" data-state="browse" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<title>BrowserSkills, Flint concept</title>
+<meta name="viewport" content="width=1440">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-back" viewBox="0 0 16 16"><path d="M10 3.5 5.5 8 10 12.5"/></symbol>
+    <symbol id="i-fwd" viewBox="0 0 16 16"><path d="M6 3.5 10.5 8 6 12.5"/></symbol>
+    <symbol id="i-reload" viewBox="0 0 16 16"><path d="M13 8a5 5 0 1 1-1.6-3.7"/><path d="M13 2.8v3h-3"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 16 16"><path d="M8 3v10M3 8h10"/></symbol>
+    <symbol id="i-x" viewBox="0 0 16 16"><path d="M4.5 4.5l7 7M11.5 4.5l-7 7"/></symbol>
+    <symbol id="i-panel" viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="10" rx="2.2"/><path d="M10 3v10"/></symbol>
+    <symbol id="i-record" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.5"/><circle cx="8" cy="8" r="2.4" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-sparkle" viewBox="0 0 16 16"><path d="M8 2.5c.5 3 2 4.5 5 5-3 .5-4.5 2-5 5-.5-3-2-4.5-5-5 3-.5 4.5-2 5-5z" fill="currentColor" stroke="none"/><path d="M12.5 1.5c.2 1 .7 1.5 1.7 1.7-1 .2-1.5.7-1.7 1.7-.2-1-.7-1.5-1.7-1.7 1-.2 1.5-.7 1.7-1.7z" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-repeat" viewBox="0 0 16 16"><path d="M3.2 6.5A5 5 0 0 1 12 5.2"/><path d="M12.8 9.5A5 5 0 0 1 4 10.8"/><path d="M12.4 2.4v3h-3M3.6 13.6v-3h3"/></symbol>
+    <symbol id="i-check" viewBox="0 0 16 16"><path d="M3.5 8.5 6.5 11.5 12.5 5"/></symbol>
+    <symbol id="i-minus" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.5"/><path d="M5.5 8h5"/></symbol>
+    <symbol id="i-chev-d" viewBox="0 0 16 16"><path d="M4 6.5 8 10.5 12 6.5"/></symbol>
+    <symbol id="i-chev-r" viewBox="0 0 16 16"><path d="M6.5 4 10.5 8 6.5 12"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 16 16"><path d="M3.5 4.5h9M6.5 4.5V3h3v1.5M5 4.5l.6 8h4.8l.6-8"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 16 16"><path d="M1.8 8s2.3-4 6.2-4 6.2 4 6.2 4-2.3 4-6.2 4S1.8 8 1.8 8z"/><circle cx="8" cy="8" r="2"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 16 16"><rect x="5.5" y="5.5" width="7.5" height="8" rx="1.5"/><path d="M10.5 5.5V3.8A1.3 1.3 0 0 0 9.2 2.5H4.3A1.3 1.3 0 0 0 3 3.8v5a1.3 1.3 0 0 0 1.3 1.3h1.2"/></symbol>
+    <symbol id="i-up" viewBox="0 0 16 16"><path d="M8 12.5v-9M4 7.5 8 3.5l4 4"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 16 16"><rect x="3.5" y="7" width="9" height="6.5" rx="1.6"/><path d="M5.5 7V5.2a2.5 2.5 0 0 1 5 0V7"/></symbol>
+    <symbol id="i-cursor" viewBox="0 0 16 16"><path d="M3.5 2.5 12.5 7.5 8.5 8.5 7 12.5z" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-gear" viewBox="0 0 16 16"><circle cx="8" cy="8" r="2.2"/><path d="M8 1.8v1.7M8 12.5v1.7M1.8 8h1.7M12.5 8h1.7M3.6 3.6l1.2 1.2M11.2 11.2l1.2 1.2M3.6 12.4l1.2-1.2M11.2 4.8l1.2-1.2"/></symbol>
+    <symbol id="i-key" viewBox="0 0 16 16"><circle cx="5.5" cy="8" r="3"/><path d="M8.5 8h5.5M11.5 8v2.5M13.5 8v2"/></symbol>
+  </defs>
+</svg>
+
+<div class="window" id="window">
+
+  <!-- Sidebar: traffic lights, navigation, address, tabs, agent tab, MCP status -->
+  <aside class="sidebar">
+    <div class="lights"><span></span><span></span><span></span></div>
+
+    <div class="nav">
+      <button class="icon" aria-label="Back"><svg><use href="#i-back"/></svg></button>
+      <button class="icon" aria-label="Forward" disabled><svg><use href="#i-fwd"/></svg></button>
+      <button class="icon" aria-label="Reload"><svg><use href="#i-reload"/></svg></button>
+      <span class="spacer"></span>
+      <button class="icon teach" id="teachBtn" aria-label="Teach"><svg><use href="#i-record"/></svg><span class="rec-count">3</span></button>
+      <button class="icon" id="panelBtn" aria-label="Side panel"><svg><use href="#i-panel"/></svg></button>
+    </div>
+
+    <div class="address" tabindex="0">
+      <svg class="lock"><use href="#i-lock"/></svg>
+      <span class="host">northwind-portal.example</span><span class="path">/orders</span>
+    </div>
+
+    <div class="tabs">
+      <div class="tab selected"><span class="fav nw">N</span><span class="title">Order status</span><button class="close icon" aria-label="Close tab"><svg><use href="#i-x"/></svg></button></div>
+      <div class="tab"><span class="fav nw">N</span><span class="title">Flight status</span><button class="close icon" aria-label="Close tab"><svg><use href="#i-x"/></svg></button></div>
+      <div class="tab"><span class="fav gh">G</span><span class="title">nebius-ai/token-factory-docs</span><button class="close icon" aria-label="Close tab"><svg><use href="#i-x"/></svg></button></div>
+      <div class="tab"><span class="fav li">L</span><span class="title">Inbound shipments, week 44</span><button class="close icon" aria-label="Close tab"><svg><use href="#i-x"/></svg></button></div>
+      <div class="tab new"><svg><use href="#i-plus"/></svg><span class="title">New tab</span></div>
+
+      <div class="rule"></div>
+
+      <div class="tab agent">
+        <svg class="spark"><use href="#i-sparkle"/></svg>
+        <span class="title">Agent tab</span>
+        <span class="agent-state">idle</span>
+      </div>
+    </div>
+
+    <div class="mcp">
+      <span class="dot ok"></span>
+      <span class="label">MCP live</span>
+      <span class="sep">12 calls</span>
+      <span class="endpoint">127.0.0.1:4317</span>
+    </div>
+  </aside>
+
+  <!-- Page canvas -->
+  <main class="canvas">
+    <div class="progress" aria-hidden="true"></div>
+
+    <div class="page">
+      <header class="pg-nav">
+        <span class="pg-brand">Northwind</span>
+        <nav><a class="on">Orders</a><a>Flights</a><a>Inventory</a></nav>
+        <span class="pg-user">M. Peacock</span>
+      </header>
+
+      <section class="pg-body">
+        <h1>Order status</h1>
+        <form class="pg-form">
+          <label for="order">Order number</label>
+          <input id="order" value="A-1042">
+          <button type="button">Look up</button>
+        </form>
+
+        <div class="pg-result" id="orderResult">
+          <dl>
+            <div><dt>Order</dt><dd>A-1042</dd></div>
+            <div class="pick" data-pick="status"><dt>Status</dt><dd>Shipped</dd></div>
+            <div><dt>Carrier</dt><dd>UPS</dd></div>
+            <div class="pick" data-pick="eta"><dt>Estimated delivery</dt><dd>Thu, Oct 30</dd></div>
+            <div><dt>Total</dt><dd>$184.00</dd></div>
+          </dl>
+        </div>
+
+        <p class="pg-foot">Demo data changes every minute.</p>
+      </section>
+    </div>
+
+    <!-- Repeat suggestion -->
+    <div class="suggest" role="status">
+      <svg class="ic"><use href="#i-repeat"/></svg>
+      <div class="text">
+        <span class="t1">You did this twice on northwind-portal.example</span>
+        <span class="t2">Order number, Look up, then read Status and Estimated delivery</span>
+      </div>
+      <button class="btn primary">Save as skill</button>
+      <button class="btn quiet">Not now</button>
+    </div>
+
+    <!-- Teach: picked result tags drawn over the page -->
+    <div class="pick-hint">Click a result on the page</div>
+  </main>
+
+  <!-- Side panel: Skills, Teach, Assistant, Settings -->
+  <aside class="panel">
+    <div class="panel-head">
+      <div class="seg" role="tablist">
+        <button data-go="skills">Skills</button>
+        <button data-go="teach">Teach</button>
+        <button data-go="assistant">Assistant</button>
+        <button data-go="settings">Settings</button>
+      </div>
+    </div>
+
+    <!-- Skills -->
+    <section class="pane skills">
+      <div class="running"><span class="bar"></span><span>Running Order status lookup, step 3 of 4: waitFor #order-result</span></div>
+
+      <div class="skill open">
+        <div class="skill-row">
+          <div class="skill-id">
+            <span class="name">Order status lookup</span>
+            <span class="meta">skill_order_status · northwind-portal.example</span>
+          </div>
+          <span class="badge ok">v2 verified</span>
+        </div>
+        <div class="skill-body">
+          <div class="field">
+            <label>order</label>
+            <input value="C-311">
+          </div>
+          <div class="actions">
+            <button class="btn primary">Run</button>
+            <button class="btn">Watch</button>
+            <span class="spacer"></span>
+            <button class="icon" aria-label="Delete skill"><svg><use href="#i-trash"/></svg></button>
+          </div>
+
+          <div class="run">
+            <div class="run-head">
+              <span class="badge ok">success</span>
+              <span class="mono">run 3f9a2c1e</span>
+              <span class="mono">2.4s</span>
+              <span class="mono muted">14:32</span>
+            </div>
+            <dl class="outputs">
+              <div><dt>status</dt><dd>Out for delivery</dd></div>
+              <div><dt>eta</dt><dd>Thu, Oct 30</dd></div>
+            </dl>
+            <div class="checks">
+              <span><svg><use href="#i-check"/></svg>status is one of 5 known values</span>
+              <span><svg><use href="#i-check"/></svg>eta parses as a date</span>
+            </div>
+            <a class="evidence">
+              <span class="shot">
+                <span class="shot-nav"></span>
+                <span class="shot-row w3"></span>
+                <span class="shot-row w5 hi"></span>
+                <span class="shot-row w4"></span>
+                <span class="shot-row w5 hi"></span>
+              </span>
+              <span class="ev-text">Evidence screenshot<small>northwind-portal.example/orders?order=C-311</small></span>
+              <svg class="chev"><use href="#i-chev-r"/></svg>
+            </a>
+          </div>
+
+          <details class="steps">
+            <summary><svg><use href="#i-chev-r"/></svg>Steps <span class="count">4</span><span class="compiler">compiled by nemotron-3-super</span></summary>
+            <ol>
+              <li><b>navigate</b> /orders</li>
+              <li><b>fill</b> #order <i>{order}</i></li>
+              <li><b>click</b> button Look up</li>
+              <li><b>waitFor</b> #order-result</li>
+            </ol>
+          </details>
+        </div>
+      </div>
+
+      <div class="skill">
+        <div class="skill-row">
+          <div class="skill-id">
+            <span class="name">Flight status</span>
+            <span class="meta">skill_flight_status · northwind-portal.example</span>
+          </div>
+          <span class="badge ok">v1 verified</span>
+        </div>
+      </div>
+
+      <div class="skill">
+        <div class="skill-row">
+          <div class="skill-id">
+            <span class="name">Inventory search</span>
+            <span class="meta">skill_inventory_search · northwind-portal.example</span>
+          </div>
+          <span class="badge wait">validating</span>
+        </div>
+      </div>
+
+      <div class="connect">
+        <span class="h">Connect an agent</span>
+        <p>Any MCP client can call these skills, plus browser_open, page_describe, page_act and page_read on any page.</p>
+        <div class="actions">
+          <button class="btn" id="copyCfg"><svg><use href="#i-copy"/></svg>Copy MCP config</button>
+          <button class="btn quiet">Reveal token file</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Teach -->
+    <section class="pane teach">
+      <div class="rec-head">
+        <span class="rec-dot"></span>
+        <span class="rec-title">Recording</span>
+        <span class="rec-time mono">0:42</span>
+        <span class="rec-from">from northwind-portal.example/orders</span>
+      </div>
+
+      <div class="group">
+        <span class="h">Steps</span>
+        <ol class="steplist">
+          <li><span class="n">1</span><span class="s"><b>Type</b> A-1042 in Order number</span><button class="icon rm" aria-label="Remove step"><svg><use href="#i-minus"/></svg></button></li>
+          <li><span class="n">2</span><span class="s"><b>Click</b> Look up</span><button class="icon rm" aria-label="Remove step"><svg><use href="#i-minus"/></svg></button></li>
+          <li><span class="n">3</span><span class="s"><b>Wait for</b> Order result</span><button class="icon rm" aria-label="Remove step"><svg><use href="#i-minus"/></svg></button></li>
+        </ol>
+      </div>
+
+      <div class="group">
+        <span class="h">Results</span>
+        <div class="picked">
+          <div class="pk">
+            <input class="mono" value="status">
+            <span class="sample">Shipped</span>
+            <label class="chk"><input type="checkbox"><span></span>list</label>
+          </div>
+          <div class="pk">
+            <input class="mono" value="eta">
+            <span class="sample">Thu, Oct 30</span>
+            <label class="chk"><input type="checkbox"><span></span>list</label>
+          </div>
+        </div>
+        <button class="btn pickbtn"><svg><use href="#i-cursor"/></svg>Pick another result</button>
+      </div>
+
+      <div class="group">
+        <input class="hint" placeholder="What does this do? Optional" value="Look up an order's status and delivery date">
+        <div class="actions">
+          <button class="btn primary">Save skill</button>
+          <button class="btn quiet">Discard</button>
+        </div>
+        <p class="note">Nemotron compiles the recording, then the agent tab replays it once before it becomes a tool.</p>
+      </div>
+    </section>
+
+    <!-- Assistant -->
+    <section class="pane assistant">
+      <div class="thread">
+        <div class="msg user">What's the status of order C-311?</div>
+        <div class="msg tool">
+          <span class="fn">skill_order_status</span><span class="args">{ order: "C-311" }</span><span class="dur">2.4s</span>
+        </div>
+        <div class="msg ai">
+          <p>C-311 is out for delivery with UPS. Estimated delivery is Thursday, October 30. The order total is $184.00.</p>
+          <a class="cite"><span class="badge ok">verified</span>run 3f9a2c1e, evidence</a>
+        </div>
+
+        <div class="msg user">Is the Jetson Orin Nano in stock?</div>
+        <div class="msg tool">
+          <span class="fn">page_describe</span><span class="args">/inventory</span><span class="dur">0.6s</span>
+        </div>
+        <div class="msg tool">
+          <span class="fn">page_act</span><span class="args">fill q "Jetson Orin Nano", click Search</span><span class="dur">1.1s</span>
+        </div>
+        <div class="msg ai">
+          <p>Yes. Northwind lists 17 units of Jetson Orin Nano at $249.99 as of 14:34.</p>
+          <a class="cite">page_read, no skill yet</a>
+        </div>
+
+        <div class="msg user">Save that as a skill</div>
+        <div class="msg ai busy">
+          <span class="bar"></span>
+          <p class="muted">Compiling inventory_search from the last two actions</p>
+        </div>
+      </div>
+
+      <div class="composer">
+        <input placeholder="Ask Nemotron">
+        <button class="send" aria-label="Send"><svg><use href="#i-up"/></svg></button>
+      </div>
+    </section>
+
+    <!-- Settings -->
+    <section class="pane settings">
+      <div class="form-group">
+        <span class="h">Nemotron on Nebius Token Factory</span>
+        <div class="rows">
+          <div class="row"><label>API key</label><input type="password" value="nbs_live_4f9a2c1e7b3d55a0"><span class="ok-tag">valid</span></div>
+          <div class="row"><label>Base URL</label><input value="https://api.tokenfactory.nebius.com/v1/"></div>
+          <div class="row"><label>Compiler model</label><input value="nvidia/nemotron-3-super-120b-a12b"></div>
+          <div class="row"><label>Assistant model</label><input value="nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"></div>
+        </div>
+      </div>
+      <div class="form-group">
+        <span class="h">Optional</span>
+        <div class="rows">
+          <div class="row"><label>Tavily API key</label><input type="password" value="" placeholder="Enables web_search"></div>
+          <div class="row"><label>MCP port</label><input value="4317" class="short"></div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn primary">Save</button>
+        <span class="saved">Saved 14:31</span>
+      </div>
+      <p class="note">Stored in ~/Library/Application Support/BrowserSkills/settings.json, mode 0600. NEBIUS_API_KEY in the environment overrides the key.</p>
+    </section>
+  </aside>
+</div>
+
+<!-- Prototype controls. Below the window so screenshots of #window never include them. -->
+<div class="proto">
+  <span>State</span>
+  <button data-go="browse">1 Browse</button>
+  <button data-go="skills">2 Skills</button>
+  <button data-go="teach">3 Teach</button>
+  <button data-go="assistant">4 Assistant</button>
+  <button data-go="settings">5 Settings</button>
+  <span class="gap"></span>
+  <button id="themeBtn">L Light</button>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
