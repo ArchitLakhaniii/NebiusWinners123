@@ -61,7 +61,8 @@ Panel 372 wide, padding 16. Northwind gutter 36, measure 620.
 Radii. Window 14. Page card 12. Skill group 12. Inputs and address 10. Rows and icon buttons 9 and 7. Favicons 6. Code 6.
 Capsules (buttons, pills, suggestion, composer) fully round.
 
-Materials. Window: one `backdrop-filter: blur(60px) saturate(1.8)` under the tint; `0.5px` inner white ring and a 30/80 shadow
+Materials. Window: the glass is the wallpaper blurred (Gaussian 28 px, saturation 1.3; shipped as `wallpaper-blur.jpg` so the
+prototype renders identically in headless Chromium, which skipped `backdrop-filter` on the full-window sheet) under the tint; `0.5px` inner white ring and a 30/80 shadow
 standing in for the OS window shadow. Page card shadow `0 1px 2px` + `0 16px 48px` black 35% (dark) or 14% (light).
 Action pills: white 78% with `blur(24px) saturate(1.6)` and a 0.5 px ring. Suggestion capsule: `--bar` with the same blur.
 

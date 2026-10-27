@@ -11,7 +11,7 @@
 
 html[data-theme="dark"] {
   color-scheme: dark;
-  --tint: rgba(24, 24, 28, 0.58);
+  --tint: rgba(24, 24, 28, 0.64);
   --text: rgba(255, 255, 255, 0.92);
   --text-2: rgba(255, 255, 255, 0.60);
   --text-3: rgba(255, 255, 255, 0.40);
@@ -32,7 +32,7 @@ html[data-theme="dark"] {
 
 html[data-theme="light"] {
   color-scheme: light;
-  --tint: rgba(250, 249, 246, 0.64);
+  --tint: rgba(250, 249, 246, 0.66);
   --text: rgba(28, 28, 30, 0.94);
   --text-2: rgba(28, 28, 30, 0.60);
   --text-3: rgba(28, 28, 30, 0.42);
@@ -74,16 +74,17 @@ code, .mono { font-family: var(--mono); }
 /* Desk */
 .desk {
   position: relative; width: 1440px; height: 900px; padding: 20px; overflow: hidden;
-  background: #46506a url("wallpaper.jpg") 50% 30% / cover no-repeat;
+  background: #46506a url("wallpaper.jpg") 0 0 / 1440px 1350px no-repeat;
 }
 .window {
   position: relative; z-index: 1; width: 1400px; height: 860px;
   display: grid; grid-template-columns: 244px 1fr; grid-template-areas: "sidebar stage";
   border-radius: 14px; overflow: hidden;
-  background: var(--tint);
-  -webkit-backdrop-filter: var(--glass); backdrop-filter: var(--glass);
+  background: url("wallpaper-blur.jpg") 0 0 / 1440px 900px fixed no-repeat;
   box-shadow: var(--window-shadow);
 }
+.window::before { content: ""; position: absolute; inset: 0; background: var(--tint); }
+.window > * { position: relative; }
 html:not([data-state="browse"]) .window { grid-template-columns: 244px 1fr 372px; grid-template-areas: "sidebar stage panel"; }
 
 /* Sidebar */
