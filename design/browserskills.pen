@@ -1,0 +1,3824 @@
+{
+  "version": "2.14",
+  "children": [
+    {
+      "type": "frame",
+      "id": "bs81",
+      "x": 0,
+      "y": 0,
+      "name": "1 Browse",
+      "clip": true,
+      "width": 1280,
+      "height": 800,
+      "fill": "#14171C",
+      "cornerRadius": 12,
+      "layout": "none",
+      "children": [
+        {
+          "type": "frame",
+          "id": "bs71",
+          "x": 0,
+          "y": 0,
+          "name": "Shell",
+          "width": 1280,
+          "height": 800,
+          "children": [
+            {
+              "type": "frame",
+              "id": "bs70",
+              "name": "Sidebar",
+              "width": 232,
+              "height": "fill_container",
+              "fill": "#FFFFFF08",
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "bs33",
+                  "name": "Window controls",
+                  "gap": 8,
+                  "padding": [
+                    14,
+                    14,
+                    6,
+                    14
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "ellipse",
+                      "id": "bs30",
+                      "name": "Close",
+                      "fill": "#FF5F57",
+                      "width": 12,
+                      "height": 12
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "bs31",
+                      "name": "Min",
+                      "fill": "#FEBC2E",
+                      "width": 12,
+                      "height": 12
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "bs32",
+                      "name": "Zoom",
+                      "fill": "#28C840",
+                      "width": 12,
+                      "height": 12
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "bs37",
+                  "name": "Nav",
+                  "gap": 14,
+                  "padding": [
+                    0,
+                    14,
+                    0,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "bs34",
+                      "name": "Back",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "arrow-left",
+                      "library": "lucide",
+                      "fill": "#F2F4F7"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "bs35",
+                      "name": "Forward",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "arrow-right",
+                      "library": "lucide",
+                      "fill": "#6B7280"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "bs36",
+                      "name": "Reload",
+                      "width": 14,
+                      "height": 14,
+                      "icon": "rotate-cw",
+                      "library": "lucide",
+                      "fill": "#A1A8B3"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "bs69",
+                  "name": "Sidebar body",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": [
+                    8,
+                    10,
+                    12,
+                    10
+                  ],
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "bs40",
+                      "name": "Address",
+                      "width": "fill_container",
+                      "fill": "#00000033",
+                      "cornerRadius": 8,
+                      "stroke": "#FFFFFF1A",
+                      "strokeWidth": 1,
+                      "gap": 8,
+                      "padding": [
+                        8,
+                        11
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "bs38",
+                          "name": "Lock",
+                          "width": 12,
+                          "height": 12,
+                          "icon": "lock",
+                          "library": "lucide",
+                          "fill": "#A1A8B3"
+                        },
+                        {
+                          "type": "text",
+                          "id": "bs39",
+                          "name": "URL",
+                          "fill": "#F2F4F7",
+                          "content": "portal.local/orders",
+                          "fontFamily": "Geist",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "bs45",
+                      "name": "Teach pill",
+                      "width": "fill_container",
+                      "cornerRadius": 8,
+                      "gap": 7,
+                      "padding": [
+                        7,
+                        11
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "bs41",
+                          "name": "Teach icon",
+                          "width": 12,
+                          "height": 12,
+                          "icon": "circle",
+                          "library": "lucide",
+                          "fill": "#A1A8B3"
+                        },
+                        {
+                          "type": "text",
+                          "id": "bs42",
+                          "name": "Teach label",
+                          "fill": "#A1A8B3",
+                          "content": "Teach a skill",
+                          "fontFamily": "Geist",
+                          "fontSize": 12,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "bs43",
+                          "name": "Spacer",
+                          "width": "fill_container",
+                          "height": "fit_content(0)"
+                        },
+                        {
+                          "type": "text",
+                          "id": "bs44",
+                          "name": "Shortcut",
+                          "fill": "#6B7280",
+                          "content": "⇧⌘R",
+                          "fontFamily": "Geist",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "bs66",
+                      "name": "Spacer",
+                      "width": "fill_container",
+                      "height": 6
+                    },
+                    {
+                      "type": "frame",
+                      "id": "bs55",
+                      "name": "Tabs",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "bs48",
+                          "name": "Tab Order status",
+                          "width": "fill_container",
+                          "fill": "#FFFFFF14",
+                          "cornerRadius": 8,
+                          "gap": 9,
+                          "padding": [
+                            7,
+                            10
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "bs46",
+                              "name": "Site",
+                              "width": 14,
+                              "height": 14,
+                              "icon": "globe",
+                              "library": "lucide",
+                              "fill": "#F2F4F7"
+                            },
+                            {
+                              "type": "text",
+                              "id": "bs47",
+                              "name": "Title",
+                              "fill": "#F2F4F7",
+                              "content": "Order status",
+                              "fontFamily": "Geist",
+                              "fontSize": 13,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "bs51",
+                          "name": "Tab Nebius Token Factory",
+                          "width": "fill_container",
+                          "fill": "#00000000",
+                          "cornerRadius": 8,
+                          "gap": 9,
+                          "padding": [
+                            7,
+                            10
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "bs49",
+                              "name": "Site",
+                              "width": 14,
+                              "height": 14,
+                              "icon": "globe",
+                              "library": "lucide",
+                              "fill": "#A1A8B3"
+                            },
+                            {
+                              "type": "text",
+                              "id": "bs50",
+                              "name": "Title",
+                              "fill": "#A1A8B3",
+                              "content": "Nebius Token Factory",
+                              "fontFamily": "Geist",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "bs54",
+                          "name": "Tab Nook",
+                          "width": "fill_container",
+                          "fill": "#00000000",
+                          "cornerRadius": 8,
+                          "gap": 9,
+                          "padding": [
+                            7,
+                            10
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "bs52",
+                              "name": "Site",
+                              "width": 14,
+                              "height": 14,
+                              "icon": "globe",
+                              "library": "lucide",
+                              "fill": "#A1A8B3"
+                            },
+                            {
+                              "type": "text",
+                              "id": "bs53",
+                              "name": "Title",
+                              "fill": "#A1A8B3",
+                              "content": "Nook",
+                              "fontFamily": "Geist",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "bs67",
+                      "name": "Spacer",
+                      "width": "fill_container",
+                      "height": 4
+                    },
+                    {
+                      "type": "frame",
+                      "id": "bs60",
+                      "name": "Agent",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 6,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "bs56",
+                          "name": "Agent head",
+                          "fill": "#6B7280",
+                          "content": "AGENT",
+                          "fontFamily": "Geist",
+                          "fontSize": 10,
+                          "fontWeight": "600",
+                          "letterSpacing": 0.8
+                        },
+                        {
+                          "type": "frame",
+                          "id": "bs59",
+                          "name": "Agent tab",
+                          "width": "fill_container",
+                          "cornerRadius": 8,
+                          "gap": 9,
+                          "padding": [
+                            7,
+                            10
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "ellipse",
+                              "id": "bs57",
+                              "name": "Live",
+                              "fill": "#14B8A6",
+                              "width": 7,
+                              "height": 7
+                            },
+                            {
+                              "type": "text",
+                              "id": "bs58",
+                              "name": "Agent title",
+                              "fill": "#A1A8B3",
+                              "content": "Agent  ·  portal.local",
+                              "fontFamily": "Geist",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "bs68",
+                      "name": "Spacer",
+                      "width": "fill_container",
+                      "height": "fit_content(0)"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "bs65",
+                      "name": "MCP",
+                      "width": "fill_container",
+                      "fill": "#00000026",
+                      "cornerRadius": 8,
+                      "gap": 8,
+                      "padding": [
+                        10,
+                        12
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "ellipse",
+                          "id": "bs61",
+                          "name": "MCP dot",
+                          "fill": "#14B8A6",
+                          "width": 7,
+                          "height": 7
+                        },
+                        {
+                          "type": "text",
+                          "id": "bs62",
+                          "name": "MCP label",
+                          "fill": "#A1A8B3",
+                          "content": "MCP on 127.0.0.1:4317",
+                          "fontFamily": "Geist",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "bs63",
+                          "name": "Spacer",
+                          "width": "fill_container",
+                          "height": "fit_content(0)"
+                        },
+                        {
+                          "type": "text",
+                          "id": "bs64",
+                          "name": "Calls",
+                          "fill": "#6B7280",
+                          "content": "12 calls",
+                          "fontFamily": "Geist",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "bs29",
+              "name": "Main",
+              "width": "fill_container",
+              "height": "fill_container",
+              "layout": "vertical",
+              "padding": [
+                10,
+                10,
+                10,
+                0
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "bs28",
+                  "name": "Page",
+                  "clip": true,
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": "#F6F7F9",
+                  "cornerRadius": 10,
+                  "stroke": "#FFFFFF1A",
+                  "strokeWidth": 1,
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "bs6",
+                      "name": "Page head",
+                      "width": "fill_container",
+                      "stroke": "#E6E8EC",
+                      "strokeWidth": {
+                        "bottom": 1
+                      },
+                      "gap": 22,
+                      "padding": [
+                        18,
+                        28
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "bs1",
+                          "name": "Brand",
+                          "fill": "#111318",
+                          "content": "Northwind Portal",
+                          "fontFamily": "Geist",
+                          "fontSize": 15,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "bs2",
+                          "name": "Spacer",
+                          "width": "fill_container",
+                          "height": "fit_content(0)"
+                        },
+                        {
+                          "type": "text",
+                          "id": "bs3",
+                          "name": "Nav1",
+                          "fill": "#111318",
+                          "content": "Orders",
+                          "fontFamily": "Geist",
+                          "fontSize": 13,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "bs4",
+                          "name": "Nav2",
+                          "fill": "#5C6470",
+                          "content": "Flights",
+                          "fontFamily": "Geist",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "bs5",
+                          "name": "Nav3",
+                          "fill": "#5C6470",
+                          "content": "Inventory",
+                          "fontFamily": "Geist",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "bs27",
+                      "name": "Page body",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 22,
+                      "padding": [
+                        32,
+                        28
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "bs26",
+                          "name": "H1",
+                          "fill": "#111318",
+                          "content": "Order status",
+                          "fontFamily": "Geist",
+                          "fontSize": 26,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "bs13",
+                          "name": "Lookup",
+                          "gap": 12,
+                          "alignItems": "end",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "bs10",
+                              "name": "Field Order number",
+                              "layout": "vertical",
+                              "gap": 6,
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "bs7",
+                                  "name": "Label",
+                                  "fill": "#5C6470",
+                                  "content": "Order number",
+                                  "fontFamily": "Geist",
+                                  "fontSize": 12,
+                                  "fontWeight": "500"
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "bs9",
+                                  "name": "Input",
+                                  "width": 260,
+                                  "fill": "#FFFFFF",
+                                  "cornerRadius": 8,
+                                  "stroke": "#D6DAE1",
+                                  "strokeWidth": 1,
+                                  "gap": 8,
+                                  "padding": [
+                                    9,
+                                    12
+                                  ],
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "bs8",
+                                      "name": "Value",
+                                      "fill": "#111318",
+                                      "content": "A-1042",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 14,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "bs12",
+                              "name": "Look up",
+                              "fill": "#111318",
+                              "cornerRadius": 8,
+                              "gap": 8,
+                              "padding": [
+                                10,
+                                16
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "bs11",
+                                  "name": "Look up",
+                                  "fill": "#FFFFFF",
+                                  "content": "Look up",
+                                  "fontFamily": "Geist",
+                                  "fontSize": 13,
+                                  "fontWeight": "500"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "bs25",
+                          "name": "Result",
+                          "width": 560,
+                          "fill": "#FFFFFF",
+                          "cornerRadius": 10,
+                          "stroke": "#E6E8EC",
+                          "strokeWidth": 1,
+                          "layout": "vertical",
+                          "gap": 14,
+                          "padding": [
+                            20,
+                            22
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "bs14",
+                              "name": "R head",
+                              "fill": "#111318",
+                              "content": "Order A-1042",
+                              "fontFamily": "Geist",
+                              "fontSize": 20,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "bs24",
+                              "name": "R row",
+                              "gap": 40,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "bs17",
+                                  "name": "Status",
+                                  "layout": "vertical",
+                                  "gap": 4,
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "bs15",
+                                      "name": "S1",
+                                      "fill": "#5C6470",
+                                      "content": "Status",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 12,
+                                      "fontWeight": "normal"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "bs16",
+                                      "name": "S2",
+                                      "fill": "#111318",
+                                      "content": "In transit",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 15,
+                                      "fontWeight": "500"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "bs20",
+                                  "name": "Carrier",
+                                  "layout": "vertical",
+                                  "gap": 4,
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "bs18",
+                                      "name": "C1",
+                                      "fill": "#5C6470",
+                                      "content": "Carrier",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 12,
+                                      "fontWeight": "normal"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "bs19",
+                                      "name": "C2",
+                                      "fill": "#111318",
+                                      "content": "UPS",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 15,
+                                      "fontWeight": "500"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "bs23",
+                                  "name": "ETA",
+                                  "layout": "vertical",
+                                  "gap": 4,
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "bs21",
+                                      "name": "E1",
+                                      "fill": "#5C6470",
+                                      "content": "ETA",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 12,
+                                      "fontWeight": "normal"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "bs22",
+                                      "name": "E2",
+                                      "fill": "#111318",
+                                      "content": "Oct 29",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 15,
+                                      "fontWeight": "500"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "bs80",
+          "layoutPosition": "absolute",
+          "x": 540,
+          "y": 724,
+          "name": "Repeat toast",
+          "fill": "#1C2026E6",
+          "cornerRadius": 12,
+          "stroke": "#FFFFFF1A",
+          "strokeWidth": 1,
+          "effect": [
+            {
+              "type": "background_blur",
+              "radius": 30
+            },
+            {
+              "type": "shadow",
+              "shadowType": "outer",
+              "color": "#00000059",
+              "offset": {
+                "x": 0,
+                "y": 12
+              },
+              "blur": 32
+            }
+          ],
+          "gap": 12,
+          "padding": [
+            12,
+            14,
+            12,
+            16
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "icon",
+              "id": "bs72",
+              "name": "Repeat",
+              "width": 14,
+              "height": 14,
+              "icon": "repeat",
+              "library": "lucide",
+              "fill": "#14B8A6"
+            },
+            {
+              "type": "frame",
+              "id": "bs75",
+              "name": "Toast text",
+              "layout": "vertical",
+              "gap": 2,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "bs73",
+                  "name": "T1",
+                  "fill": "#F2F4F7",
+                  "content": "You did this twice on portal.local",
+                  "fontFamily": "Geist",
+                  "fontSize": 13,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "bs74",
+                  "name": "T2",
+                  "fill": "#A1A8B3",
+                  "content": "Open orders, enter an order number, look it up",
+                  "fontFamily": "Geist",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "bs76",
+              "name": "Spacer",
+              "width": 10,
+              "height": 1
+            },
+            {
+              "type": "frame",
+              "id": "bs78",
+              "name": "Button Save as skill",
+              "fill": "#14B8A6",
+              "cornerRadius": 7,
+              "gap": 6,
+              "padding": [
+                6,
+                11
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "bs77",
+                  "name": "Save as skill",
+                  "fill": "#0B1F1C",
+                  "content": "Save as skill",
+                  "fontFamily": "Geist",
+                  "fontSize": 12,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "bs79",
+              "name": "Not now",
+              "fill": "#A1A8B3",
+              "content": "Not now",
+              "fontFamily": "Geist",
+              "fontSize": 12,
+              "fontWeight": "500"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "bs224",
+      "x": 1360,
+      "y": 0,
+      "name": "2 Skills",
+      "clip": true,
+      "width": 1280,
+      "height": 800,
+      "fill": "#14171C",
+      "cornerRadius": 12,
+      "layout": "none",
+      "children": [
+        {
+          "type": "frame",
+          "id": "bs223",
+          "x": 0,
+          "y": 0,
+          "name": "Shell",
+          "width": 1280,
+          "height": 800,
+          "children": [
+            {
+              "type": "frame",
+              "id": "bs221",
+              "name": "Sidebar",
+              "width": 232,
+              "height": "fill_container",
+              "fill": "#FFFFFF08",
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "bs184",
+                  "name": "Window controls",
+                  "gap": 8,
+                  "padding": [
+                    14,
+                    14,
+                    6,
+                    14
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "ellipse",
+                      "id": "bs181",
+                      "name": "Close",
+                      "fill": "#FF5F57",
+                      "width": 12,
+                      "height": 12
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "bs182",
+                      "name": "Min",
+                      "fill": "#FEBC2E",
+                      "width": 12,
+                      "height": 12
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "bs183",
+                      "name": "Zoom",
+                      "fill": "#28C840",
+                      "width": 12,
+                      "height": 12
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "bs188",
+                  "name": "Nav",
+                  "gap": 14,
+                  "padding": [
+                    0,
+                    14,
+                    0,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "bs185",
+                      "name": "Back",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "arrow-left",
+                      "library": "lucide",
+                      "fill": "#F2F4F7"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "bs186",
+                      "name": "Forward",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "arrow-right",
+                      "library": "lucide",
+                      "fill": "#6B7280"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "bs187",
+                      "name": "Reload",
+                      "width": 14,
+                      "height": 14,
+                      "icon": "rotate-cw",
+                      "library": "lucide",
+                      "fill": "#A1A8B3"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "bs220",
+                  "name": "Sidebar body",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": [
+                    8,
+                    10,
+                    12,
+                    10
+                  ],
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "bs191",
+                      "name": "Address",
+                      "width": "fill_container",
+                      "fill": "#00000033",
+                      "cornerRadius": 8,
+                      "stroke": "#FFFFFF1A",
+                      "strokeWidth": 1,
+                      "gap": 8,
+                      "padding": [
+                        8,
+                        11
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "bs189",
+                          "name": "Lock",
+                          "width": 12,
+                          "height": 12,
+                          "icon": "lock",
+                          "library": "lucide",
+                          "fill": "#A1A8B3"
+                        },
+                        {
+                          "type": "text",
+                          "id": "bs190",
+                          "name": "URL",
+                          "fill": "#F2F4F7",
+                          "content": "portal.local/orders",
+                          "fontFamily": "Geist",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "bs196",
+                      "name": "Teach pill",
+                      "width": "fill_container",
+                      "cornerRadius": 8,
+                      "gap": 7,
+                      "padding": [
+                        7,
+                        11
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "bs192",
+                          "name": "Teach icon",
+                          "width": 12,
+                          "height": 12,
+                          "icon": "circle",
+                          "library": "lucide",
+                          "fill": "#A1A8B3"
+                        },
+                        {
+                          "type": "text",
+                          "id": "bs193",
+                          "name": "Teach label",
+                          "fill": "#A1A8B3",
+                          "content": "Teach a skill",
+                          "fontFamily": "Geist",
+                          "fontSize": 12,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "bs194",
+                          "name": "Spacer",
+                          "width": "fill_container",
+                          "height": "fit_content(0)"
+                        },
+                        {
+                          "type": "text",
+                          "id": "bs195",
+                          "name": "Shortcut",
+                          "fill": "#6B7280",
+                          "content": "⇧⌘R",
+                          "fontFamily": "Geist",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "bs217",
+                      "name": "Spacer",
+                      "width": "fill_container",
+                      "height": 6
+                    },
+                    {
+                      "type": "frame",
+                      "id": "bs206",
+                      "name": "Tabs",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "bs199",
+                          "name": "Tab Order status",
+                          "width": "fill_container",
+                          "fill": "#FFFFFF14",
+                          "cornerRadius": 8,
+                          "gap": 9,
+                          "padding": [
+                            7,
+                            10
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "bs197",
+                              "name": "Site",
+                              "width": 14,
+                              "height": 14,
+                              "icon": "globe",
+                              "library": "lucide",
+                              "fill": "#F2F4F7"
+                            },
+                            {
+                              "type": "text",
+                              "id": "bs198",
+                              "name": "Title",
+                              "fill": "#F2F4F7",
+                              "content": "Order status",
+                              "fontFamily": "Geist",
+                              "fontSize": 13,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "bs202",
+                          "name": "Tab Nebius Token Factory",
+                          "width": "fill_container",
+                          "fill": "#00000000",
+                          "cornerRadius": 8,
+                          "gap": 9,
+                          "padding": [
+                            7,
+                            10
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "bs200",
+                              "name": "Site",
+                              "width": 14,
+                              "height": 14,
+                              "icon": "globe",
+                              "library": "lucide",
+                              "fill": "#A1A8B3"
+                            },
+                            {
+                              "type": "text",
+                              "id": "bs201",
+                              "name": "Title",
+                              "fill": "#A1A8B3",
+                              "content": "Nebius Token Factory",
+                              "fontFamily": "Geist",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "bs205",
+                          "name": "Tab Nook",
+                          "width": "fill_container",
+                          "fill": "#00000000",
+                          "cornerRadius": 8,
+                          "gap": 9,
+                          "padding": [
+                            7,
+                            10
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "bs203",
+                              "name": "Site",
+                              "width": 14,
+                              "height": 14,
+                              "icon": "globe",
+                              "library": "lucide",
+                              "fill": "#A1A8B3"
+                            },
+                            {
+                              "type": "text",
+                              "id": "bs204",
+                              "name": "Title",
+                              "fill": "#A1A8B3",
+                              "content": "Nook",
+                              "fontFamily": "Geist",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "bs218",
+                      "name": "Spacer",
+                      "width": "fill_container",
+                      "height": 4
+                    },
+                    {
+                      "type": "frame",
+                      "id": "bs211",
+                      "name": "Agent",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 6,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "bs207",
+                          "name": "Agent head",
+                          "fill": "#6B7280",
+                          "content": "AGENT",
+                          "fontFamily": "Geist",
+                          "fontSize": 10,
+                          "fontWeight": "600",
+                          "letterSpacing": 0.8
+                        },
+                        {
+                          "type": "frame",
+                          "id": "bs210",
+                          "name": "Agent tab",
+                          "width": "fill_container",
+                          "cornerRadius": 8,
+                          "gap": 9,
+                          "padding": [
+                            7,
+                            10
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "ellipse",
+                              "id": "bs208",
+                              "name": "Live",
+                              "fill": "#14B8A6",
+                              "width": 7,
+                              "height": 7
+                            },
+                            {
+                              "type": "text",
+                              "id": "bs209",
+                              "name": "Agent title",
+                              "fill": "#A1A8B3",
+                              "content": "Agent  ·  portal.local",
+                              "fontFamily": "Geist",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "bs219",
+                      "name": "Spacer",
+                      "width": "fill_container",
+                      "height": "fit_content(0)"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "bs216",
+                      "name": "MCP",
+                      "width": "fill_container",
+                      "fill": "#00000026",
+                      "cornerRadius": 8,
+                      "gap": 8,
+                      "padding": [
+                        10,
+                        12
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "ellipse",
+                          "id": "bs212",
+                          "name": "MCP dot",
+                          "fill": "#14B8A6",
+                          "width": 7,
+                          "height": 7
+                        },
+                        {
+                          "type": "text",
+                          "id": "bs213",
+                          "name": "MCP label",
+                          "fill": "#A1A8B3",
+                          "content": "MCP on 127.0.0.1:4317",
+                          "fontFamily": "Geist",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "bs214",
+                          "name": "Spacer",
+                          "width": "fill_container",
+                          "height": "fit_content(0)"
+                        },
+                        {
+                          "type": "text",
+                          "id": "bs215",
+                          "name": "Calls",
+                          "fill": "#6B7280",
+                          "content": "12 calls",
+                          "fontFamily": "Geist",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "bs180",
+              "name": "Main",
+              "width": "fill_container",
+              "height": "fill_container",
+              "layout": "vertical",
+              "padding": [
+                10,
+                0
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "bs179",
+                  "name": "Page",
+                  "clip": true,
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": "#F6F7F9",
+                  "cornerRadius": 10,
+                  "stroke": "#FFFFFF1A",
+                  "strokeWidth": 1,
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "bs157",
+                      "name": "Page head",
+                      "width": "fill_container",
+                      "stroke": "#E6E8EC",
+                      "strokeWidth": {
+                        "bottom": 1
+                      },
+                      "gap": 22,
+                      "padding": [
+                        18,
+                        28
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "bs152",
+                          "name": "Brand",
+                          "fill": "#111318",
+                          "content": "Northwind Portal",
+                          "fontFamily": "Geist",
+                          "fontSize": 15,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "bs153",
+                          "name": "Spacer",
+                          "width": "fill_container",
+                          "height": "fit_content(0)"
+                        },
+                        {
+                          "type": "text",
+                          "id": "bs154",
+                          "name": "Nav1",
+                          "fill": "#111318",
+                          "content": "Orders",
+                          "fontFamily": "Geist",
+                          "fontSize": 13,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "bs155",
+                          "name": "Nav2",
+                          "fill": "#5C6470",
+                          "content": "Flights",
+                          "fontFamily": "Geist",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "bs156",
+                          "name": "Nav3",
+                          "fill": "#5C6470",
+                          "content": "Inventory",
+                          "fontFamily": "Geist",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "bs178",
+                      "name": "Page body",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 22,
+                      "padding": [
+                        32,
+                        28
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "bs177",
+                          "name": "H1",
+                          "fill": "#111318",
+                          "content": "Order status",
+                          "fontFamily": "Geist",
+                          "fontSize": 26,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "bs164",
+                          "name": "Lookup",
+                          "gap": 12,
+                          "alignItems": "end",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "bs161",
+                              "name": "Field Order number",
+                              "layout": "vertical",
+                              "gap": 6,
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "bs158",
+                                  "name": "Label",
+                                  "fill": "#5C6470",
+                                  "content": "Order number",
+                                  "fontFamily": "Geist",
+                                  "fontSize": 12,
+                                  "fontWeight": "500"
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "bs160",
+                                  "name": "Input",
+                                  "width": 260,
+                                  "fill": "#FFFFFF",
+                                  "cornerRadius": 8,
+                                  "stroke": "#D6DAE1",
+                                  "strokeWidth": 1,
+                                  "gap": 8,
+                                  "padding": [
+                                    9,
+                                    12
+                                  ],
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "bs159",
+                                      "name": "Value",
+                                      "fill": "#111318",
+                                      "content": "A-1042",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 14,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "bs163",
+                              "name": "Look up",
+                              "fill": "#111318",
+                              "cornerRadius": 8,
+                              "gap": 8,
+                              "padding": [
+                                10,
+                                16
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "bs162",
+                                  "name": "Look up",
+                                  "fill": "#FFFFFF",
+                                  "content": "Look up",
+                                  "fontFamily": "Geist",
+                                  "fontSize": 13,
+                                  "fontWeight": "500"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "bs176",
+                          "name": "Result",
+                          "width": 560,
+                          "fill": "#FFFFFF",
+                          "cornerRadius": 10,
+                          "stroke": "#E6E8EC",
+                          "strokeWidth": 1,
+                          "layout": "vertical",
+                          "gap": 14,
+                          "padding": [
+                            20,
+                            22
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "bs165",
+                              "name": "R head",
+                              "fill": "#111318",
+                              "content": "Order A-1042",
+                              "fontFamily": "Geist",
+                              "fontSize": 20,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "bs175",
+                              "name": "R row",
+                              "gap": 40,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "bs168",
+                                  "name": "Status",
+                                  "layout": "vertical",
+                                  "gap": 4,
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "bs166",
+                                      "name": "S1",
+                                      "fill": "#5C6470",
+                                      "content": "Status",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 12,
+                                      "fontWeight": "normal"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "bs167",
+                                      "name": "S2",
+                                      "fill": "#111318",
+                                      "content": "In transit",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 15,
+                                      "fontWeight": "500"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "bs171",
+                                  "name": "Carrier",
+                                  "layout": "vertical",
+                                  "gap": 4,
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "bs169",
+                                      "name": "C1",
+                                      "fill": "#5C6470",
+                                      "content": "Carrier",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 12,
+                                      "fontWeight": "normal"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "bs170",
+                                      "name": "C2",
+                                      "fill": "#111318",
+                                      "content": "UPS",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 15,
+                                      "fontWeight": "500"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "bs174",
+                                  "name": "ETA",
+                                  "layout": "vertical",
+                                  "gap": 4,
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "bs172",
+                                      "name": "E1",
+                                      "fill": "#5C6470",
+                                      "content": "ETA",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 12,
+                                      "fontWeight": "normal"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "bs173",
+                                      "name": "E2",
+                                      "fill": "#111318",
+                                      "content": "Oct 29",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 15,
+                                      "fontWeight": "500"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "bs222",
+              "name": "Panel wrap",
+              "height": "fill_container",
+              "layout": "vertical",
+              "padding": 10,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "bs151",
+                  "name": "Panel",
+                  "width": 328,
+                  "height": "fill_container",
+                  "fill": "#FFFFFF0D",
+                  "cornerRadius": 10,
+                  "stroke": "#FFFFFF1A",
+                  "strokeWidth": 1,
+                  "effect": {
+                    "type": "background_blur",
+                    "radius": 30
+                  },
+                  "layout": "vertical",
+                  "gap": 14,
+                  "padding": 14,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "bs149",
+                      "name": "Panel head",
+                      "width": "fill_container",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "bs146",
+                          "name": "Segments",
+                          "fill": "#00000033",
+                          "cornerRadius": 8,
+                          "gap": 2,
+                          "padding": 2,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "bs141",
+                              "name": "Seg Skills",
+                              "fill": "#FFFFFF14",
+                              "cornerRadius": 6,
+                              "gap": 8,
+                              "padding": [
+                                5,
+                                12
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "bs140",
+                                  "name": "Skills",
+                                  "fill": "#F2F4F7",
+                                  "content": "Skills",
+                                  "fontFamily": "Geist",
+                                  "fontSize": 12,
+                                  "fontWeight": "500"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "bs143",
+                              "name": "Seg Assistant",
+                              "fill": "#00000000",
+                              "cornerRadius": 6,
+                              "gap": 8,
+                              "padding": [
+                                5,
+                                12
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "bs142",
+                                  "name": "Assistant",
+                                  "fill": "#A1A8B3",
+                                  "content": "Assistant",
+                                  "fontFamily": "Geist",
+                                  "fontSize": 12,
+                                  "fontWeight": "500"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "bs145",
+                              "name": "Seg Settings",
+                              "fill": "#00000000",
+                              "cornerRadius": 6,
+                              "gap": 8,
+                              "padding": [
+                                5,
+                                12
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "bs144",
+                                  "name": "Settings",
+                                  "fill": "#A1A8B3",
+                                  "content": "Settings",
+                                  "fontFamily": "Geist",
+                                  "fontSize": 12,
+                                  "fontWeight": "500"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "bs147",
+                          "name": "Spacer",
+                          "width": "fill_container",
+                          "height": "fit_content(0)"
+                        },
+                        {
+                          "type": "icon",
+                          "id": "bs148",
+                          "name": "Close panel",
+                          "width": 15,
+                          "height": 15,
+                          "icon": "panel-right-close",
+                          "library": "lucide",
+                          "fill": "#A1A8B3"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "bs129",
+                      "name": "Cards",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "bs110",
+                          "name": "Skill Order status",
+                          "width": "fill_container",
+                          "fill": "#FFFFFF14",
+                          "cornerRadius": 10,
+                          "stroke": "#FFFFFF1A",
+                          "strokeWidth": 1,
+                          "layout": "vertical",
+                          "gap": 12,
+                          "padding": 12,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "bs89",
+                              "name": "Card head",
+                              "width": "fill_container",
+                              "gap": 8,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "bs84",
+                                  "name": "Names",
+                                  "layout": "vertical",
+                                  "gap": 3,
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "bs82",
+                                      "name": "Title",
+                                      "fill": "#F2F4F7",
+                                      "content": "Order status",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 13,
+                                      "fontWeight": "500"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "bs83",
+                                      "name": "Tool",
+                                      "fill": "#6B7280",
+                                      "content": "skill_order_status  ·  portal.local",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 11,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "bs85",
+                                  "name": "Spacer",
+                                  "width": "fill_container",
+                                  "height": "fit_content(0)"
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "bs88",
+                                  "name": "Badge",
+                                  "gap": 5,
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "ellipse",
+                                      "id": "bs86",
+                                      "name": "B",
+                                      "fill": "#14B8A6",
+                                      "width": 6,
+                                      "height": 6
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "bs87",
+                                      "name": "Status",
+                                      "fill": "#14B8A6",
+                                      "content": "v2 verified",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 11,
+                                      "fontWeight": "500"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "bs93",
+                              "name": "Input",
+                              "width": "fill_container",
+                              "fill": "#00000033",
+                              "cornerRadius": 7,
+                              "stroke": "#FFFFFF1A",
+                              "strokeWidth": 1,
+                              "gap": 8,
+                              "padding": [
+                                7,
+                                10
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "bs90",
+                                  "name": "Key",
+                                  "fill": "#A1A8B3",
+                                  "content": "order_id",
+                                  "fontFamily": "Geist",
+                                  "fontSize": 12,
+                                  "fontWeight": "normal"
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "bs91",
+                                  "name": "Spacer",
+                                  "width": "fill_container",
+                                  "height": "fit_content(0)"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "bs92",
+                                  "name": "Val",
+                                  "fill": "#F2F4F7",
+                                  "content": "A-1042",
+                                  "fontFamily": "Geist",
+                                  "fontSize": 12,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "bs102",
+                              "name": "Actions",
+                              "width": "fill_container",
+                              "gap": 8,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "bs96",
+                                  "name": "Button Run",
+                                  "fill": "#14B8A6",
+                                  "cornerRadius": 7,
+                                  "gap": 6,
+                                  "padding": [
+                                    6,
+                                    11
+                                  ],
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "icon",
+                                      "id": "bs94",
+                                      "name": "Run icon",
+                                      "width": 13,
+                                      "height": 13,
+                                      "icon": "play",
+                                      "library": "lucide",
+                                      "fill": "#0B1F1C"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "bs95",
+                                      "name": "Run",
+                                      "fill": "#0B1F1C",
+                                      "content": "Run",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 12,
+                                      "fontWeight": "500"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "bs99",
+                                  "name": "Button Watch",
+                                  "fill": "#FFFFFF14",
+                                  "cornerRadius": 7,
+                                  "stroke": "#FFFFFF1A",
+                                  "strokeWidth": 1,
+                                  "gap": 6,
+                                  "padding": [
+                                    6,
+                                    11
+                                  ],
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "icon",
+                                      "id": "bs97",
+                                      "name": "Watch icon",
+                                      "width": 13,
+                                      "height": 13,
+                                      "icon": "eye",
+                                      "library": "lucide",
+                                      "fill": "#F2F4F7"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "bs98",
+                                      "name": "Watch",
+                                      "fill": "#F2F4F7",
+                                      "content": "Watch",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 12,
+                                      "fontWeight": "500"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "bs100",
+                                  "name": "Spacer",
+                                  "width": "fill_container",
+                                  "height": "fit_content(0)"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "bs101",
+                                  "name": "Time",
+                                  "fill": "#6B7280",
+                                  "content": "1.8s  ·  verified",
+                                  "fontFamily": "Geist",
+                                  "fontSize": 11,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "bs109",
+                              "name": "Outputs",
+                              "layout": "vertical",
+                              "gap": 4,
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "bs105",
+                                  "name": "O1",
+                                  "gap": 10,
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "bs103",
+                                      "name": "K1",
+                                      "fill": "#A1A8B3",
+                                      "content": "status",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 12,
+                                      "fontWeight": "normal"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "bs104",
+                                      "name": "V1",
+                                      "fill": "#F2F4F7",
+                                      "content": "In transit",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 12,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "bs108",
+                                  "name": "O2",
+                                  "gap": 10,
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "bs106",
+                                      "name": "K2",
+                                      "fill": "#A1A8B3",
+                                      "content": "eta",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 12,
+                                      "fontWeight": "normal"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "bs107",
+                                      "name": "V2",
+                                      "fill": "#F2F4F7",
+                                      "content": "Oct 29",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 12,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "bs119",
+                          "name": "Skill Flight status",
+                          "width": "fill_container",
+                          "fill": "#FFFFFF14",
+                          "cornerRadius": 10,
+                          "stroke": "#FFFFFF1A",
+                          "strokeWidth": 1,
+                          "layout": "vertical",
+                          "gap": 12,
+                          "padding": 12,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "bs118",
+                              "name": "Card head",
+                              "width": "fill_container",
+                              "gap": 8,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "bs113",
+                                  "name": "Names",
+                                  "layout": "vertical",
+                                  "gap": 3,
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "bs111",
+                                      "name": "Title",
+                                      "fill": "#F2F4F7",
+                                      "content": "Flight status",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 13,
+                                      "fontWeight": "500"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "bs112",
+                                      "name": "Tool",
+                                      "fill": "#6B7280",
+                                      "content": "skill_flight_status  ·  portal.local",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 11,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "bs114",
+                                  "name": "Spacer",
+                                  "width": "fill_container",
+                                  "height": "fit_content(0)"
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "bs117",
+                                  "name": "Badge",
+                                  "gap": 5,
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "ellipse",
+                                      "id": "bs115",
+                                      "name": "B",
+                                      "fill": "#14B8A6",
+                                      "width": 6,
+                                      "height": 6
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "bs116",
+                                      "name": "Status",
+                                      "fill": "#14B8A6",
+                                      "content": "v1 verified",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 11,
+                                      "fontWeight": "500"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "bs128",
+                          "name": "Skill Inventory search",
+                          "width": "fill_container",
+                          "fill": "#FFFFFF14",
+                          "cornerRadius": 10,
+                          "stroke": "#FFFFFF1A",
+                          "strokeWidth": 1,
+                          "layout": "vertical",
+                          "gap": 12,
+                          "padding": 12,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "bs127",
+                              "name": "Card head",
+                              "width": "fill_container",
+                              "gap": 8,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "bs122",
+                                  "name": "Names",
+                                  "layout": "vertical",
+                                  "gap": 3,
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "bs120",
+                                      "name": "Title",
+                                      "fill": "#F2F4F7",
+                                      "content": "Inventory search",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 13,
+                                      "fontWeight": "500"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "bs121",
+                                      "name": "Tool",
+                                      "fill": "#6B7280",
+                                      "content": "skill_inventory_search  ·  portal.local",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 11,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "bs123",
+                                  "name": "Spacer",
+                                  "width": "fill_container",
+                                  "height": "fit_content(0)"
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "bs126",
+                                  "name": "Badge",
+                                  "gap": 5,
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "ellipse",
+                                      "id": "bs124",
+                                      "name": "B",
+                                      "fill": "#F59E0B",
+                                      "width": 6,
+                                      "height": 6
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "bs125",
+                                      "name": "Status",
+                                      "fill": "#F59E0B",
+                                      "content": "validating",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 11,
+                                      "fontWeight": "500"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "bs150",
+                      "name": "Spacer",
+                      "width": "fill_container",
+                      "height": "fit_content(0)"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "bs139",
+                      "name": "Connect",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "bs130",
+                          "name": "Connect head",
+                          "fill": "#F2F4F7",
+                          "content": "Connect an agent",
+                          "fontFamily": "Geist",
+                          "fontSize": 13,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "bs131",
+                          "name": "Connect body",
+                          "fill": "#A1A8B3",
+                          "textGrowth": "fixed-width",
+                          "width": 280,
+                          "content": "Any MCP client gets one tool per skill plus browser_open, page_describe, page_act and page_read.",
+                          "lineHeight": 1.45,
+                          "fontFamily": "Geist",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "bs138",
+                          "name": "Connect actions",
+                          "gap": 8,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "bs134",
+                              "name": "Button Copy config",
+                              "fill": "#FFFFFF14",
+                              "cornerRadius": 7,
+                              "stroke": "#FFFFFF1A",
+                              "strokeWidth": 1,
+                              "gap": 6,
+                              "padding": [
+                                6,
+                                11
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "icon",
+                                  "id": "bs132",
+                                  "name": "Copy config icon",
+                                  "width": 13,
+                                  "height": 13,
+                                  "icon": "copy",
+                                  "library": "lucide",
+                                  "fill": "#F2F4F7"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "bs133",
+                                  "name": "Copy config",
+                                  "fill": "#F2F4F7",
+                                  "content": "Copy config",
+                                  "fontFamily": "Geist",
+                                  "fontSize": 12,
+                                  "fontWeight": "500"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "bs137",
+                              "name": "Button Token file",
+                              "fill": "#FFFFFF14",
+                              "cornerRadius": 7,
+                              "stroke": "#FFFFFF1A",
+                              "strokeWidth": 1,
+                              "gap": 6,
+                              "padding": [
+                                6,
+                                11
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "icon",
+                                  "id": "bs135",
+                                  "name": "Token file icon",
+                                  "width": 13,
+                                  "height": 13,
+                                  "icon": "file-key",
+                                  "library": "lucide",
+                                  "fill": "#F2F4F7"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "bs136",
+                                  "name": "Token file",
+                                  "fill": "#F2F4F7",
+                                  "content": "Token file",
+                                  "fontFamily": "Geist",
+                                  "fontSize": 12,
+                                  "fontWeight": "500"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "bs348",
+      "x": 2720,
+      "y": 0,
+      "name": "3 Teach",
+      "clip": true,
+      "width": 1280,
+      "height": 800,
+      "fill": "#14171C",
+      "cornerRadius": 12,
+      "layout": "none",
+      "children": [
+        {
+          "type": "frame",
+          "id": "bs347",
+          "x": 0,
+          "y": 0,
+          "name": "Shell",
+          "width": 1280,
+          "height": 800,
+          "children": [
+            {
+              "type": "frame",
+              "id": "bs345",
+              "name": "Sidebar",
+              "width": 232,
+              "height": "fill_container",
+              "fill": "#FFFFFF08",
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "bs310",
+                  "name": "Window controls",
+                  "gap": 8,
+                  "padding": [
+                    14,
+                    14,
+                    6,
+                    14
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "ellipse",
+                      "id": "bs307",
+                      "name": "Close",
+                      "fill": "#FF5F57",
+                      "width": 12,
+                      "height": 12
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "bs308",
+                      "name": "Min",
+                      "fill": "#FEBC2E",
+                      "width": 12,
+                      "height": 12
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "bs309",
+                      "name": "Zoom",
+                      "fill": "#28C840",
+                      "width": 12,
+                      "height": 12
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "bs314",
+                  "name": "Nav",
+                  "gap": 14,
+                  "padding": [
+                    0,
+                    14,
+                    0,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "bs311",
+                      "name": "Back",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "arrow-left",
+                      "library": "lucide",
+                      "fill": "#F2F4F7"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "bs312",
+                      "name": "Forward",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "arrow-right",
+                      "library": "lucide",
+                      "fill": "#6B7280"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "bs313",
+                      "name": "Reload",
+                      "width": 14,
+                      "height": 14,
+                      "icon": "rotate-cw",
+                      "library": "lucide",
+                      "fill": "#A1A8B3"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "bs344",
+                  "name": "Sidebar body",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": [
+                    8,
+                    10,
+                    12,
+                    10
+                  ],
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "bs317",
+                      "name": "Address",
+                      "width": "fill_container",
+                      "fill": "#00000033",
+                      "cornerRadius": 8,
+                      "stroke": "#FFFFFF1A",
+                      "strokeWidth": 1,
+                      "gap": 8,
+                      "padding": [
+                        8,
+                        11
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "bs315",
+                          "name": "Lock",
+                          "width": 12,
+                          "height": 12,
+                          "icon": "lock",
+                          "library": "lucide",
+                          "fill": "#A1A8B3"
+                        },
+                        {
+                          "type": "text",
+                          "id": "bs316",
+                          "name": "URL",
+                          "fill": "#F2F4F7",
+                          "content": "portal.local/orders",
+                          "fontFamily": "Geist",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "bs320",
+                      "name": "Recording pill",
+                      "width": "fill_container",
+                      "fill": "#F0564A1F",
+                      "cornerRadius": 8,
+                      "stroke": "#F0564A40",
+                      "strokeWidth": 1,
+                      "gap": 7,
+                      "padding": [
+                        7,
+                        11
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "ellipse",
+                          "id": "bs318",
+                          "name": "Rec",
+                          "fill": "#F0564A",
+                          "width": 8,
+                          "height": 8
+                        },
+                        {
+                          "type": "text",
+                          "id": "bs319",
+                          "name": "Rec label",
+                          "fill": "#F2F4F7",
+                          "content": "Recording  3 steps",
+                          "fontFamily": "Geist",
+                          "fontSize": 12,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "bs341",
+                      "name": "Spacer",
+                      "width": "fill_container",
+                      "height": 6
+                    },
+                    {
+                      "type": "frame",
+                      "id": "bs330",
+                      "name": "Tabs",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "bs323",
+                          "name": "Tab Order status",
+                          "width": "fill_container",
+                          "fill": "#FFFFFF14",
+                          "cornerRadius": 8,
+                          "gap": 9,
+                          "padding": [
+                            7,
+                            10
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "bs321",
+                              "name": "Site",
+                              "width": 14,
+                              "height": 14,
+                              "icon": "globe",
+                              "library": "lucide",
+                              "fill": "#F2F4F7"
+                            },
+                            {
+                              "type": "text",
+                              "id": "bs322",
+                              "name": "Title",
+                              "fill": "#F2F4F7",
+                              "content": "Order status",
+                              "fontFamily": "Geist",
+                              "fontSize": 13,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "bs326",
+                          "name": "Tab Nebius Token Factory",
+                          "width": "fill_container",
+                          "fill": "#00000000",
+                          "cornerRadius": 8,
+                          "gap": 9,
+                          "padding": [
+                            7,
+                            10
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "bs324",
+                              "name": "Site",
+                              "width": 14,
+                              "height": 14,
+                              "icon": "globe",
+                              "library": "lucide",
+                              "fill": "#A1A8B3"
+                            },
+                            {
+                              "type": "text",
+                              "id": "bs325",
+                              "name": "Title",
+                              "fill": "#A1A8B3",
+                              "content": "Nebius Token Factory",
+                              "fontFamily": "Geist",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "bs329",
+                          "name": "Tab Nook",
+                          "width": "fill_container",
+                          "fill": "#00000000",
+                          "cornerRadius": 8,
+                          "gap": 9,
+                          "padding": [
+                            7,
+                            10
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "bs327",
+                              "name": "Site",
+                              "width": 14,
+                              "height": 14,
+                              "icon": "globe",
+                              "library": "lucide",
+                              "fill": "#A1A8B3"
+                            },
+                            {
+                              "type": "text",
+                              "id": "bs328",
+                              "name": "Title",
+                              "fill": "#A1A8B3",
+                              "content": "Nook",
+                              "fontFamily": "Geist",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "bs342",
+                      "name": "Spacer",
+                      "width": "fill_container",
+                      "height": 4
+                    },
+                    {
+                      "type": "frame",
+                      "id": "bs335",
+                      "name": "Agent",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 6,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "bs331",
+                          "name": "Agent head",
+                          "fill": "#6B7280",
+                          "content": "AGENT",
+                          "fontFamily": "Geist",
+                          "fontSize": 10,
+                          "fontWeight": "600",
+                          "letterSpacing": 0.8
+                        },
+                        {
+                          "type": "frame",
+                          "id": "bs334",
+                          "name": "Agent tab",
+                          "width": "fill_container",
+                          "cornerRadius": 8,
+                          "gap": 9,
+                          "padding": [
+                            7,
+                            10
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "ellipse",
+                              "id": "bs332",
+                              "name": "Live",
+                              "fill": "#14B8A6",
+                              "width": 7,
+                              "height": 7
+                            },
+                            {
+                              "type": "text",
+                              "id": "bs333",
+                              "name": "Agent title",
+                              "fill": "#A1A8B3",
+                              "content": "Agent  ·  portal.local",
+                              "fontFamily": "Geist",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "bs343",
+                      "name": "Spacer",
+                      "width": "fill_container",
+                      "height": "fit_content(0)"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "bs340",
+                      "name": "MCP",
+                      "width": "fill_container",
+                      "fill": "#00000026",
+                      "cornerRadius": 8,
+                      "gap": 8,
+                      "padding": [
+                        10,
+                        12
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "ellipse",
+                          "id": "bs336",
+                          "name": "MCP dot",
+                          "fill": "#14B8A6",
+                          "width": 7,
+                          "height": 7
+                        },
+                        {
+                          "type": "text",
+                          "id": "bs337",
+                          "name": "MCP label",
+                          "fill": "#A1A8B3",
+                          "content": "MCP on 127.0.0.1:4317",
+                          "fontFamily": "Geist",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "bs338",
+                          "name": "Spacer",
+                          "width": "fill_container",
+                          "height": "fit_content(0)"
+                        },
+                        {
+                          "type": "text",
+                          "id": "bs339",
+                          "name": "Calls",
+                          "fill": "#6B7280",
+                          "content": "12 calls",
+                          "fontFamily": "Geist",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "bs306",
+              "name": "Main",
+              "width": "fill_container",
+              "height": "fill_container",
+              "layout": "vertical",
+              "padding": [
+                10,
+                0
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "bs305",
+                  "name": "Page",
+                  "clip": true,
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": "#F6F7F9",
+                  "cornerRadius": 10,
+                  "stroke": "#FFFFFF1A",
+                  "strokeWidth": 1,
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "bs283",
+                      "name": "Page head",
+                      "width": "fill_container",
+                      "stroke": "#E6E8EC",
+                      "strokeWidth": {
+                        "bottom": 1
+                      },
+                      "gap": 22,
+                      "padding": [
+                        18,
+                        28
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "bs278",
+                          "name": "Brand",
+                          "fill": "#111318",
+                          "content": "Northwind Portal",
+                          "fontFamily": "Geist",
+                          "fontSize": 15,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "bs279",
+                          "name": "Spacer",
+                          "width": "fill_container",
+                          "height": "fit_content(0)"
+                        },
+                        {
+                          "type": "text",
+                          "id": "bs280",
+                          "name": "Nav1",
+                          "fill": "#111318",
+                          "content": "Orders",
+                          "fontFamily": "Geist",
+                          "fontSize": 13,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "bs281",
+                          "name": "Nav2",
+                          "fill": "#5C6470",
+                          "content": "Flights",
+                          "fontFamily": "Geist",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "bs282",
+                          "name": "Nav3",
+                          "fill": "#5C6470",
+                          "content": "Inventory",
+                          "fontFamily": "Geist",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "bs304",
+                      "name": "Page body",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 22,
+                      "padding": [
+                        32,
+                        28
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "bs303",
+                          "name": "H1",
+                          "fill": "#111318",
+                          "content": "Order status",
+                          "fontFamily": "Geist",
+                          "fontSize": 26,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "bs290",
+                          "name": "Lookup",
+                          "gap": 12,
+                          "alignItems": "end",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "bs287",
+                              "name": "Field Order number",
+                              "layout": "vertical",
+                              "gap": 6,
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "bs284",
+                                  "name": "Label",
+                                  "fill": "#5C6470",
+                                  "content": "Order number",
+                                  "fontFamily": "Geist",
+                                  "fontSize": 12,
+                                  "fontWeight": "500"
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "bs286",
+                                  "name": "Input",
+                                  "width": 260,
+                                  "fill": "#FFFFFF",
+                                  "cornerRadius": 8,
+                                  "stroke": "#D6DAE1",
+                                  "strokeWidth": 1,
+                                  "gap": 8,
+                                  "padding": [
+                                    9,
+                                    12
+                                  ],
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "bs285",
+                                      "name": "Value",
+                                      "fill": "#111318",
+                                      "content": "A-1042",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 14,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "bs289",
+                              "name": "Look up",
+                              "fill": "#111318",
+                              "cornerRadius": 8,
+                              "gap": 8,
+                              "padding": [
+                                10,
+                                16
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "bs288",
+                                  "name": "Look up",
+                                  "fill": "#FFFFFF",
+                                  "content": "Look up",
+                                  "fontFamily": "Geist",
+                                  "fontSize": 13,
+                                  "fontWeight": "500"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "bs302",
+                          "name": "Result",
+                          "width": 560,
+                          "fill": "#FFFFFF",
+                          "cornerRadius": 10,
+                          "stroke": "#E6E8EC",
+                          "strokeWidth": 1,
+                          "layout": "vertical",
+                          "gap": 14,
+                          "padding": [
+                            20,
+                            22
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "bs291",
+                              "name": "R head",
+                              "fill": "#111318",
+                              "content": "Order A-1042",
+                              "fontFamily": "Geist",
+                              "fontSize": 20,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "bs301",
+                              "name": "R row",
+                              "gap": 40,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "bs294",
+                                  "name": "Status",
+                                  "layout": "vertical",
+                                  "gap": 4,
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "bs292",
+                                      "name": "S1",
+                                      "fill": "#5C6470",
+                                      "content": "Status",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 12,
+                                      "fontWeight": "normal"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "bs293",
+                                      "name": "S2",
+                                      "fill": "#111318",
+                                      "content": "In transit",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 15,
+                                      "fontWeight": "500"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "bs297",
+                                  "name": "Carrier",
+                                  "layout": "vertical",
+                                  "gap": 4,
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "bs295",
+                                      "name": "C1",
+                                      "fill": "#5C6470",
+                                      "content": "Carrier",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 12,
+                                      "fontWeight": "normal"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "bs296",
+                                      "name": "C2",
+                                      "fill": "#111318",
+                                      "content": "UPS",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 15,
+                                      "fontWeight": "500"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "bs300",
+                                  "name": "ETA",
+                                  "layout": "vertical",
+                                  "gap": 4,
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "bs298",
+                                      "name": "E1",
+                                      "fill": "#5C6470",
+                                      "content": "ETA",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 12,
+                                      "fontWeight": "normal"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "bs299",
+                                      "name": "E2",
+                                      "fill": "#111318",
+                                      "content": "Oct 29",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 15,
+                                      "fontWeight": "500"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "bs346",
+              "name": "Panel wrap",
+              "height": "fill_container",
+              "layout": "vertical",
+              "padding": 10,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "bs277",
+                  "name": "Teach panel",
+                  "width": 328,
+                  "height": "fill_container",
+                  "fill": "#FFFFFF0D",
+                  "cornerRadius": 10,
+                  "stroke": "#FFFFFF1A",
+                  "strokeWidth": 1,
+                  "effect": {
+                    "type": "background_blur",
+                    "radius": 30
+                  },
+                  "layout": "vertical",
+                  "gap": 16,
+                  "padding": 14,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "bs257",
+                      "name": "Teach head",
+                      "width": "fill_container",
+                      "gap": 9,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "ellipse",
+                          "id": "bs253",
+                          "name": "Rec",
+                          "fill": "#F0564A",
+                          "width": 8,
+                          "height": 8
+                        },
+                        {
+                          "type": "text",
+                          "id": "bs254",
+                          "name": "Teach title",
+                          "fill": "#F2F4F7",
+                          "content": "Teaching: Order status",
+                          "fontFamily": "Geist",
+                          "fontSize": 13,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "bs255",
+                          "name": "Spacer",
+                          "width": "fill_container",
+                          "height": "fit_content(0)"
+                        },
+                        {
+                          "type": "icon",
+                          "id": "bs256",
+                          "name": "Close panel",
+                          "width": 15,
+                          "height": 15,
+                          "icon": "panel-right-close",
+                          "library": "lucide",
+                          "fill": "#A1A8B3"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "bs259",
+                      "name": "Steps",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "bs258",
+                          "name": "Steps head",
+                          "fill": "#6B7280",
+                          "content": "STEPS",
+                          "fontFamily": "Geist",
+                          "fontSize": 10,
+                          "fontWeight": "600",
+                          "letterSpacing": 0.8
+                        },
+                        {
+                          "type": "frame",
+                          "id": "bs230",
+                          "name": "Step Open",
+                          "width": "fill_container",
+                          "gap": 8,
+                          "padding": [
+                            6,
+                            0
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "bs225",
+                              "name": "N",
+                              "fill": "#6B7280",
+                              "content": "1",
+                              "fontFamily": "Geist",
+                              "fontSize": 11,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "text",
+                              "id": "bs226",
+                              "name": "S",
+                              "fill": "#F2F4F7",
+                              "content": "Open",
+                              "fontFamily": "Geist",
+                              "fontSize": 12,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "text",
+                              "id": "bs227",
+                              "name": "D",
+                              "fill": "#A1A8B3",
+                              "content": "portal.local/orders",
+                              "fontFamily": "Geist",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "bs228",
+                              "name": "Spacer",
+                              "width": "fill_container",
+                              "height": "fit_content(0)"
+                            },
+                            {
+                              "type": "icon",
+                              "id": "bs229",
+                              "name": "Remove",
+                              "width": 12,
+                              "height": 12,
+                              "icon": "x",
+                              "library": "lucide",
+                              "fill": "#6B7280"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "bs236",
+                          "name": "Step Fill",
+                          "width": "fill_container",
+                          "gap": 8,
+                          "padding": [
+                            6,
+                            0
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "bs231",
+                              "name": "N",
+                              "fill": "#6B7280",
+                              "content": "2",
+                              "fontFamily": "Geist",
+                              "fontSize": 11,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "text",
+                              "id": "bs232",
+                              "name": "S",
+                              "fill": "#F2F4F7",
+                              "content": "Fill",
+                              "fontFamily": "Geist",
+                              "fontSize": 12,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "text",
+                              "id": "bs233",
+                              "name": "D",
+                              "fill": "#A1A8B3",
+                              "content": "Order number  ·  A-1042",
+                              "fontFamily": "Geist",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "bs234",
+                              "name": "Spacer",
+                              "width": "fill_container",
+                              "height": "fit_content(0)"
+                            },
+                            {
+                              "type": "icon",
+                              "id": "bs235",
+                              "name": "Remove",
+                              "width": 12,
+                              "height": 12,
+                              "icon": "x",
+                              "library": "lucide",
+                              "fill": "#6B7280"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "bs242",
+                          "name": "Step Click",
+                          "width": "fill_container",
+                          "gap": 8,
+                          "padding": [
+                            6,
+                            0
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "bs237",
+                              "name": "N",
+                              "fill": "#6B7280",
+                              "content": "3",
+                              "fontFamily": "Geist",
+                              "fontSize": 11,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "text",
+                              "id": "bs238",
+                              "name": "S",
+                              "fill": "#F2F4F7",
+                              "content": "Click",
+                              "fontFamily": "Geist",
+                              "fontSize": 12,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "text",
+                              "id": "bs239",
+                              "name": "D",
+                              "fill": "#A1A8B3",
+                              "content": "Look up",
+                              "fontFamily": "Geist",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "bs240",
+                              "name": "Spacer",
+                              "width": "fill_container",
+                              "height": "fit_content(0)"
+                            },
+                            {
+                              "type": "icon",
+                              "id": "bs241",
+                              "name": "Remove",
+                              "width": 12,
+                              "height": 12,
+                              "icon": "x",
+                              "library": "lucide",
+                              "fill": "#6B7280"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "bs264",
+                      "name": "Results",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "bs260",
+                          "name": "Results head",
+                          "fill": "#6B7280",
+                          "content": "RESULTS",
+                          "fontFamily": "Geist",
+                          "fontSize": 10,
+                          "fontWeight": "600",
+                          "letterSpacing": 0.8
+                        },
+                        {
+                          "type": "frame",
+                          "id": "bs247",
+                          "name": "Result status",
+                          "width": "fill_container",
+                          "gap": 8,
+                          "padding": [
+                            6,
+                            0
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "bs243",
+                              "name": "K",
+                              "fill": "#14B8A6",
+                              "content": "status",
+                              "fontFamily": "Geist",
+                              "fontSize": 12,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "text",
+                              "id": "bs244",
+                              "name": "V",
+                              "fill": "#A1A8B3",
+                              "content": "In transit",
+                              "fontFamily": "Geist",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "bs245",
+                              "name": "Spacer",
+                              "width": "fill_container",
+                              "height": "fit_content(0)"
+                            },
+                            {
+                              "type": "icon",
+                              "id": "bs246",
+                              "name": "List",
+                              "width": 12,
+                              "height": 12,
+                              "icon": "list",
+                              "library": "lucide",
+                              "fill": "#6B7280"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "bs252",
+                          "name": "Result eta",
+                          "width": "fill_container",
+                          "gap": 8,
+                          "padding": [
+                            6,
+                            0
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "bs248",
+                              "name": "K",
+                              "fill": "#14B8A6",
+                              "content": "eta",
+                              "fontFamily": "Geist",
+                              "fontSize": 12,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "text",
+                              "id": "bs249",
+                              "name": "V",
+                              "fill": "#A1A8B3",
+                              "content": "Oct 29",
+                              "fontFamily": "Geist",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "bs250",
+                              "name": "Spacer",
+                              "width": "fill_container",
+                              "height": "fit_content(0)"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "bs263",
+                          "name": "Button Pick a result on the page",
+                          "fill": "#FFFFFF14",
+                          "cornerRadius": 7,
+                          "stroke": "#FFFFFF1A",
+                          "strokeWidth": 1,
+                          "gap": 6,
+                          "padding": [
+                            6,
+                            11
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "bs261",
+                              "name": "Pick a result on the page icon",
+                              "width": 13,
+                              "height": 13,
+                              "icon": "mouse-pointer-click",
+                              "library": "lucide",
+                              "fill": "#F2F4F7"
+                            },
+                            {
+                              "type": "text",
+                              "id": "bs262",
+                              "name": "Pick a result on the page",
+                              "fill": "#F2F4F7",
+                              "content": "Pick a result on the page",
+                              "fontFamily": "Geist",
+                              "fontSize": 12,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "bs265",
+                      "name": "Spacer",
+                      "width": "fill_container",
+                      "height": "fit_content(0)"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "bs276",
+                      "name": "Save",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 10,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "bs267",
+                          "name": "Hint",
+                          "width": "fill_container",
+                          "fill": "#00000033",
+                          "cornerRadius": 8,
+                          "stroke": "#FFFFFF1A",
+                          "strokeWidth": 1,
+                          "gap": 8,
+                          "padding": [
+                            8,
+                            11
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "bs266",
+                              "name": "Hint",
+                              "fill": "#6B7280",
+                              "content": "What does this do? Optional",
+                              "fontFamily": "Geist",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "bs274",
+                          "name": "Save row",
+                          "width": "fill_container",
+                          "gap": 8,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "bs269",
+                              "name": "Button Save skill",
+                              "fill": "#14B8A6",
+                              "cornerRadius": 7,
+                              "gap": 6,
+                              "padding": [
+                                6,
+                                11
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "bs268",
+                                  "name": "Save skill",
+                                  "fill": "#0B1F1C",
+                                  "content": "Save skill",
+                                  "fontFamily": "Geist",
+                                  "fontSize": 12,
+                                  "fontWeight": "500"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "bs271",
+                              "name": "Button Discard",
+                              "fill": "#FFFFFF14",
+                              "cornerRadius": 7,
+                              "stroke": "#FFFFFF1A",
+                              "strokeWidth": 1,
+                              "gap": 6,
+                              "padding": [
+                                6,
+                                11
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "bs270",
+                                  "name": "Discard",
+                                  "fill": "#F2F4F7",
+                                  "content": "Discard",
+                                  "fontFamily": "Geist",
+                                  "fontSize": 12,
+                                  "fontWeight": "500"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "bs272",
+                              "name": "Spacer",
+                              "width": "fill_container",
+                              "height": "fit_content(0)"
+                            },
+                            {
+                              "type": "text",
+                              "id": "bs273",
+                              "name": "Compiler",
+                              "fill": "#6B7280",
+                              "content": "Nemotron Super",
+                              "fontFamily": "Geist",
+                              "fontSize": 11,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "bs275",
+                          "name": "Note",
+                          "fill": "#6B7280",
+                          "textGrowth": "fixed-width",
+                          "width": 296,
+                          "content": "Saved skills are replayed once with a different input before they become tools.",
+                          "lineHeight": 1.45,
+                          "fontFamily": "Geist",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "note",
+      "id": "bs349",
+      "x": 0,
+      "y": 860,
+      "name": "Design notes",
+      "width": 1280,
+      "height": 120,
+      "content": "BrowserSkills UI. One accent (teal 14B8A6), solid base 14171C, translucent panels with blur, no gradients, no drop shadows except the toast. Geist stands in for SF Pro; the app uses the system font. Three states: browse with repeat toast, skills panel open, teaching."
+    }
+  ],
+  "fileToken": "c02d719d-9474-4c2e-b592-3c0376f3ebef"
+}
