@@ -27,7 +27,6 @@ final class Executor: ObservableObject {
     /// Runs the active validated version of `skill`. Identical calls within 10s return the earlier run.
     func run(skill: Skill, inputs: [String: String], dedupe: Bool = true) async -> RunRecord {
         let key = dedupe ? "\(skill.id)|" + inputs.sorted { $0.key < $1.key }.map { "\($0.key)=\($0.value)" }.joined(separator: "&") : nil
-        if let key, let earlier = store.recentRun(dedupeKey: key, within: 10), earlier.status.isTerminal { return earlier }
         guard let version = store.activeVersion(of: skill) else {
             return failure(skill: skill, inputs: inputs, "skill \(skill.name) has no validated version")
         }
@@ -37,6 +36,8 @@ final class Executor: ObservableObject {
     func run(version: SkillVersion, inputs: [String: String], purpose: String, dedupeKey: String? = nil) async -> RunRecord {
         await acquire()
         defer { release() }
+        // Checked after acquiring, so two identical calls arriving together share one run instead of both passing the check.
+        if let dedupeKey, let earlier = store.recentRun(dedupeKey: dedupeKey, within: 10), earlier.status.isTerminal { return earlier }
         let w = version.workflow
         var record = RunRecord(id: UUID().uuidString.lowercased(), skillID: version.skillID, version: version.version, inputs: inputs,
                                status: .running, outputs: [:], log: [], error: nil, checks: [], screenshot: nil, started: Date(), finished: nil, purpose: purpose)
@@ -88,6 +89,12 @@ final class Executor: ObservableObject {
         return finish(&record, .success, error: nil)
     }
 
+    /// The agent tab's URL when it is no longer on the workflow origin, so later steps never act on another site.
+    private func leftOrigin(of w: Workflow) -> String? {
+        guard let url = tab.webView.url else { return nil }
+        return Workflow.origin(of: url) == w.origin ? nil : url.absoluteString
+    }
+
     private func perform(_ step: WorkflowStep, workflow w: Workflow, inputs: [String: String]) async -> (Bool, String) {
         switch step.kind {
         case .navigate:
@@ -96,7 +103,10 @@ final class Executor: ObservableObject {
             let before = tab.navigationCount
             tab.load(url)
             let loaded = await tab.waitForLoad(since: before, timeout: Double(step.timeoutMs ?? 15000) / 1000)
-            return (loaded, loaded ? "opened \(url.absoluteString)" : "page did not finish loading")
+            guard loaded else { return (false, "page did not finish loading") }
+            // A server redirect can land off-origin even though the step URL was on it.
+            if let landed = leftOrigin(of: w) { return (false, "refused to continue off \(w.origin): \(landed)") }
+            return (true, "opened \(url.absoluteString)")
         default:
             var stepDict = (try? JSONSerialization.jsonObject(with: JSONEncoder().encode(step))) as? [String: Any] ?? [:]
             if stepDict["target"] == nil {
@@ -110,13 +120,19 @@ final class Executor: ObservableObject {
                 result = (try await tab.call(Scripts.runStep, ["step": stepDict, "value": value ?? NSNull()])) as? [String: Any] ?? [:]
             } catch {
                 // A click that navigates tears down the page mid-call; that is success if a load follows.
-                if await tab.waitForLoad(since: before, timeout: 10) { return (true, "navigated") }
+                if await tab.waitForLoad(since: before, timeout: 10) {
+                    if let landed = leftOrigin(of: w) { return (false, "refused to continue off \(w.origin): \(landed)") }
+                    return (true, "navigated")
+                }
                 return (false, error.localizedDescription)
             }
             guard result["ok"] as? Bool == true else { return (false, "\(result["error"] ?? "error"): \(result["detail"] ?? "")") }
             if step.kind == .click || step.kind == .press {
                 try? await Task.sleep(for: .milliseconds(350))
-                if tab.navigationCount > before || tab.webView.isLoading { _ = await tab.waitForLoad(since: before, timeout: 15) }
+                if tab.navigationCount > before || tab.webView.isLoading {
+                    _ = await tab.waitForLoad(since: before, timeout: 15)
+                    if let landed = leftOrigin(of: w) { return (false, "refused to continue off \(w.origin): \(landed)") }
+                }
             }
             return (true, "\(step.kind.rawValue) \(result["label"] as? String ?? "") via \(result["via"] as? String ?? "?")")
         }
@@ -133,6 +149,7 @@ final class Executor: ObservableObject {
     }
 
     private func finish(_ r: inout RunRecord, _ status: RunStatus, error: String?) -> RunRecord {
+        cancelled.remove(r.id)
         r.status = status; r.error = error; r.finished = Date()
         store.updateRun(r)
         return r

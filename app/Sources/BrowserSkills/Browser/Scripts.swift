@@ -104,16 +104,31 @@ enum Scripts {
 
       function setValue(el, value) {
         el.focus();
+        if (!el.matches('input, textarea, select')) {
+          // Rich-text editors: contenteditable has no value setter.
+          if (el.isContentEditable) { el.textContent = value; el.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'insertText', data: value })); return true; }
+          return false;
+        }
+        if (el.tagName === 'SELECT') {
+          // Agents see option labels (page_describe) while recordings carry option values: accept either.
+          const options = Array.from(el.options);
+          const match = options.find(o => o.value === value) || options.find(o => o.text.trim() === String(value).trim())
+            || options.find(o => o.text.trim().toLowerCase() === String(value).trim().toLowerCase());
+          if (!match) return false;
+          value = match.value;
+        }
         const proto = el.tagName === 'TEXTAREA' ? HTMLTextAreaElement.prototype
           : el.tagName === 'SELECT' ? HTMLSelectElement.prototype : HTMLInputElement.prototype;
         const setter = Object.getOwnPropertyDescriptor(proto, 'value').set;
         setter.call(el, value);
         el.dispatchEvent(new Event('input', { bubbles: true }));
         el.dispatchEvent(new Event('change', { bubbles: true }));
+        return true;
       }
 
+      /// Text to return to callers. The value of a password, OTP or card field is never read back.
       function readText(el) {
-        if (el.matches('input, textarea, select')) return el.value;
+        if (el.matches('input, textarea, select')) return isSecret(el) ? '' : el.value;
         return (el.innerText || el.textContent || '').replace(/\s+/g, ' ').trim();
       }
 
@@ -230,8 +245,16 @@ enum Scripts {
     const bs = window.__bs;
     const el = document.querySelector('[data-bs-ref="' + CSS.escape(ref) + '"]');
     if (!el) return { ok: false, error: 'not_found', detail: 'no element with ref ' + ref + '; call page_describe again' };
-    if (op === 'fill' || op === 'select') { bs.setValue(el, value || ''); return { ok: true, detail: op + ' ' + bs.nameOf(el) }; }
-    if (op === 'submit') { const f = el.form || el.closest('form') || el; if (f.requestSubmit) f.requestSubmit(); else f.submit(); return { ok: true, detail: 'submitted' }; }
+    if (op === 'fill' || op === 'select') {
+      if (!bs.setValue(el, value || '')) return { ok: false, error: 'cannot_fill', detail: bs.nameOf(el) + ' does not accept the value "' + (value || '') + '"' };
+      return { ok: true, detail: op + ' ' + bs.nameOf(el) };
+    }
+    if (op === 'submit') {
+      const f = el.tagName === 'FORM' ? el : (el.form || el.closest('form'));
+      if (!f) return { ok: false, error: 'not_a_form', detail: bs.nameOf(el) + ' is not in a form' };
+      if (f.requestSubmit) f.requestSubmit(); else f.submit();
+      return { ok: true, detail: 'submitted' };
+    }
     el.scrollIntoView({ block: 'center' });
     el.click();
     return { ok: true, detail: 'clicked ' + bs.nameOf(el) };
@@ -251,7 +274,9 @@ enum Scripts {
     const el = found.el;
     el.scrollIntoView({ block: 'center' });
     switch (step.kind) {
-      case 'fill': case 'select': bs.setValue(el, value || ''); break;
+      case 'fill': case 'select':
+        if (!bs.setValue(el, value || '')) return { ok: false, error: 'cannot_fill', detail: bs.nameOf(el) + ' does not accept the value "' + (value || '') + '"' };
+        break;
       case 'click': el.click(); break;
       case 'press': {
         const opts = { key: step.key, code: step.key, keyCode: step.key === 'Enter' ? 13 : 0, bubbles: true, cancelable: true };

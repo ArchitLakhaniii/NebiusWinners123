@@ -27,7 +27,10 @@ final class BrowserTab: NSObject, ObservableObject, Identifiable, WKNavigationDe
     var onNavigated: ((URL) -> Void)?
 
     private(set) var navigationCount = 0
-    private var loadWaiters: [(Int, CheckedContinuation<Bool, Never>)] = []
+    /// True when the most recent navigation ended in an error instead of a loaded page.
+    private(set) var lastLoadFailed = false
+    private var loadWaiters: [(id: Int, since: Int, cont: CheckedContinuation<Bool, Never>)] = []
+    private var nextWaiterID = 0
 
     init(isAgent: Bool = false) {
         self.isAgent = isAgent
@@ -64,22 +67,27 @@ final class BrowserTab: NSObject, ObservableObject, Identifiable, WKNavigationDe
 
     /// Waits for a navigation after `since` (a `navigationCount` value) to finish.
     func waitForLoad(since: Int, timeout: Double = 15) async -> Bool {
-        if navigationCount > since && !webView.isLoading { return true }
+        if navigationCount > since && !webView.isLoading { return loaded(since: since) }
+        nextWaiterID += 1
+        let id = nextWaiterID
         return await withCheckedContinuation { cont in
-            loadWaiters.append((since, cont))
+            loadWaiters.append((id, since, cont))
+            // Each waiter has its own timer, so an earlier call's expiry cannot cut a later wait short.
             Task { @MainActor [weak self] in
                 try? await Task.sleep(for: .seconds(timeout))
-                self?.resolveWaiters(timedOut: true)
+                self?.resolveWaiters(timedOutID: id)
             }
         }
     }
 
-    private func resolveWaiters(timedOut: Bool) {
-        var keep: [(Int, CheckedContinuation<Bool, Never>)] = []
-        for (since, cont) in loadWaiters {
-            if timedOut { cont.resume(returning: navigationCount > since && !webView.isLoading) }
-            else if navigationCount > since { cont.resume(returning: true) }
-            else { keep.append((since, cont)) }
+    private func loaded(since: Int) -> Bool { navigationCount > since && !webView.isLoading && !lastLoadFailed }
+
+    private func resolveWaiters(timedOutID: Int? = nil) {
+        var keep: [(id: Int, since: Int, cont: CheckedContinuation<Bool, Never>)] = []
+        for w in loadWaiters {
+            if w.id == timedOutID { w.cont.resume(returning: loaded(since: w.since)) }
+            else if navigationCount > w.since { w.cont.resume(returning: !lastLoadFailed) }
+            else { keep.append(w) }
         }
         loadWaiters = keep
     }
@@ -124,10 +132,11 @@ final class BrowserTab: NSObject, ObservableObject, Identifiable, WKNavigationDe
         canGoForward = webView.canGoForward
     }
 
-    private func finished() {
+    private func finished(failed: Bool) {
+        lastLoadFailed = failed
         navigationCount += 1
         syncState()
-        resolveWaiters(timedOut: false)
+        resolveWaiters()
     }
 
     // MARK: WKNavigationDelegate
@@ -136,12 +145,15 @@ final class BrowserTab: NSObject, ObservableObject, Identifiable, WKNavigationDe
     func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) { syncState() }
 
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        finished()
+        finished(failed: false)
         if let u = webView.url { onNavigated?(u) }
     }
 
-    func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) { finished() }
-    func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) { finished() }
+    func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) { finished(failed: true) }
+    func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
+        // A cancelled provisional load (another navigation superseded it) is not a failure of the page.
+        finished(failed: (error as NSError).code != NSURLErrorCancelled)
+    }
 
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction) async -> WKNavigationActionPolicy {
         guard let scheme = navigationAction.request.url?.scheme?.lowercased() else { return .cancel }
