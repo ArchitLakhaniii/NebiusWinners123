@@ -36,7 +36,7 @@
       <div class="sidebar-foot">
         <button class="newtab"><span class="plus">+</span>New tab<kbd>⌘T</kbd></button>
         <div class="mcp">
-          <span class="mcp-line"><span class="mcp-title">MCP</span> serving 3 skills, 14 calls today</span>
+          <span class="mcp-line"><span class="mcp-title">MCP</span> 3 skills, 14 calls today</span>
           <span class="mcp-endpoint">127.0.0.1:4317/mcp</span>
         </div>
       </div>
@@ -48,7 +48,6 @@
 
         <div class="page-actions">
           <button class="pill teach" data-action="teach">
-            <span class="rec" aria-hidden="true"></span>
             <span class="teach-idle">Teach</span>
             <span class="teach-live">Recording <span class="count">4</span></span>
           </button>
@@ -59,25 +58,34 @@
           <header class="nw-header">
             <span class="nw-mark">Northwind</span>
             <nav>
-              <a class="current" href="#">Order status</a>
-              <a href="#">Flight status</a>
+              <a class="current" href="#">Orders</a>
+              <a href="#">Flights</a>
               <a href="#">Inventory</a>
             </nav>
           </header>
           <section class="nw-body">
-            <h1>Order status</h1>
-            <form class="nw-form">
+            <form class="nw-lookup">
               <label for="order">Order number</label>
-              <input id="order" value="B-77">
-              <button type="button">Look up</button>
+              <div class="nw-field">
+                <input id="order" value="B-77" spellcheck="false">
+                <button type="button">Look up</button>
+              </div>
             </form>
-            <dl class="nw-result" id="order-result">
-              <div><dt>Order</dt><dd id="order-id">B-77</dd></div>
-              <div class="pickable" data-pick="status"><dt>Status</dt><dd id="order-status">In transit</dd></div>
-              <div><dt>Carrier</dt><dd id="order-carrier">Northwind Freight</dd></div>
-              <div class="pickable" data-pick="eta"><dt>Estimated delivery</dt><dd id="order-eta">Fri 30 Oct</dd></div>
-              <div><dt>Total</dt><dd id="order-total">$212.00</dd></div>
-            </dl>
+            <div class="nw-order" id="order-result">
+              <p class="nw-eyebrow">Order <span id="order-id">B-77</span></p>
+              <h1 class="pickable" data-pick="status"><span id="order-status">In transit</span></h1>
+              <ol class="nw-track" aria-label="Delivery progress">
+                <li class="done">Ordered</li>
+                <li class="done">Packed</li>
+                <li class="now">In transit</li>
+                <li>Delivered</li>
+              </ol>
+              <dl class="nw-facts">
+                <div><dt>Carrier</dt><dd id="order-carrier">Northwind Freight</dd></div>
+                <div class="pickable" data-pick="eta"><dt>Estimated delivery</dt><dd id="order-eta">Fri 30 Oct</dd></div>
+                <div><dt>Total</dt><dd id="order-total">$212.00</dd></div>
+              </dl>
+            </div>
             <p class="nw-foot">Demo data changes every minute.</p>
           </section>
         </div>
@@ -107,38 +115,30 @@
           </button>
           <div class="skill-body">
             <label class="field"><span>order</span><input value="C-311" spellcheck="false"></label>
-            <div class="row">
+            <div class="actions">
               <button class="ink" data-action="run">Run</button>
-              <button class="ghost" data-action="watch">Watch in agent tab</button>
-              <span class="spacer"></span>
-              <button class="icon" aria-label="Delete skill" title="Delete skill"><svg viewBox="0 0 16 16"><path d="M3.5 4.5h9M6.5 4.5V3h3v1.5M5 4.5l.6 8h4.8l.6-8"/></svg></button>
+              <button class="text" data-action="watch">Watch in agent tab</button>
+              <button class="text hover-only" data-action="delete">Delete</button>
             </div>
             <div class="runline" aria-hidden="true"></div>
             <div class="run">
-              <div class="run-head"><span class="ok">Succeeded</span><span class="sub">2.4 s, run 8f3a21c0</span></div>
-              <dl class="outputs">
-                <div><dt>status</dt><dd>In transit</dd></div>
-                <div><dt>eta</dt><dd>Fri 30 Oct</dd></div>
-              </dl>
-              <ul class="checks">
-                <li>status is a known state</li>
-                <li>eta parses as a date</li>
-              </ul>
-              <a class="evidence" href="#">
-                <span class="thumb" aria-hidden="true"><i></i><i></i><i></i></span>
-                <span>Evidence screenshot<span class="sub">after step 4</span></span>
-              </a>
+              <p class="run-sum"><strong>Succeeded</strong> in 2.4 s. <span class="k">status</span> In transit, <span class="k">eta</span> Fri 30 Oct.</p>
+              <details class="steps">
+                <summary>4 steps, 2 checks, evidence</summary>
+                <ol>
+                  <li><code>navigate</code> /orders</li>
+                  <li><code>fill</code> Order number <span class="sub">{order}</span></li>
+                  <li><code>click</code> Look up</li>
+                  <li><code>waitFor</code> #order-result</li>
+                </ol>
+                <ul class="checks">
+                  <li>status is a known state</li>
+                  <li>eta parses as a date</li>
+                </ul>
+                <a class="text evidence" href="#">Open evidence screenshot</a>
+                <p class="sub compiled">skill_order_status, run 8f3a21c0, compiled by nvidia/nemotron-3-super-120b-a12b</p>
+              </details>
             </div>
-            <details class="steps">
-              <summary>4 steps</summary>
-              <ol>
-                <li><code>navigate</code> /orders</li>
-                <li><code>fill</code> Order number <span class="sub">{order}</span></li>
-                <li><code>click</code> Look up</li>
-                <li><code>waitFor</code> #order-result</li>
-              </ol>
-            </details>
-            <p class="sub compiled">skill_order_status, compiled by nvidia/nemotron-3-super-120b-a12b</p>
           </div>
         </div>
 
@@ -156,10 +156,10 @@
         </div>
 
         <div class="connect">
-          <p>Any MCP client can call these skills, and can work any open page through <code>page_describe</code> and <code>page_act</code>.</p>
-          <div class="row">
-            <button class="ghost" data-action="copyconfig">Copy MCP config</button>
-            <button class="ghost">Reveal token file</button>
+          <p>Any MCP client can call these skills and work any open page.</p>
+          <div class="actions">
+            <button class="text" data-action="copyconfig">Copy MCP config</button>
+            <button class="text">Reveal token file</button>
           </div>
         </div>
       </section>
@@ -186,11 +186,11 @@
             <label class="check"><input type="checkbox"> list</label>
           </div>
         </div>
-        <button class="ghost pickbtn" data-action="pick"><span class="pick-idle">Pick another result on the page</span><span class="pick-live">Click a result on the page</span></button>
+        <button class="text pickbtn" data-action="pick"><span class="pick-idle">Pick another result on the page</span><span class="pick-live">Click a result on the page</span></button>
         <label class="field hint"><span>What does this do</span><input value="Look up order status" placeholder="Optional"></label>
-        <div class="row">
+        <div class="actions">
           <button class="ink" data-action="save">Save skill</button>
-          <button class="ghost" data-action="discard">Discard</button>
+          <button class="text" data-action="discard">Discard</button>
         </div>
         <p class="sub">Nemotron compiles the recording, the agent tab replays it, and the skill is kept only if the replay passes its checks.</p>
       </section>
@@ -224,7 +224,7 @@
           <label><span>Tavily key</span><input type="password" value="" placeholder="Enables web_search" spellcheck="false"></label>
           <label><span>MCP port</span><input value="4317" inputmode="numeric"></label>
         </div>
-        <div class="row">
+        <div class="actions">
           <button class="ink" data-action="savesettings">Save</button>
           <span class="saved" role="status">Saved</span>
         </div>

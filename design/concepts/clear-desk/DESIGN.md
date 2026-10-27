@@ -24,9 +24,9 @@ match the window radius; a single dark or light "ink" for primary actions instea
 2. The page is the only opaque thing: a 12 pt card with a soft shadow, inset from the glass.
 3. Glass is for the navigation layer only (window chrome, floating capsule, action pills). Web content stays opaque (HIG).
 4. Depth from the material and one shadow under the page card; no hairline boxes, no inner cards.
-5. Primary actions are ink (white capsule on dark, black capsule on light). The accent (ember) appears only for recording,
-   picked fields and progress lines.
-6. SF Pro: 13 pt medium for rows, 14 pt semibold for titles, 12 pt at 60% for secondary. Weight and opacity carry hierarchy.
+5. One ink capsule per view; every other action is plain text that darkens on hover. The accent (ember) appears only on
+   picked fields and progress lines; recording is an ink pill with a count.
+6. One humanist sans (Mona Sans) at 14 pt medium for rows, 16 pt semibold for titles, 13 pt at 60% for secondary. Weight and opacity carry hierarchy; no SF Pro so the chrome does not read as a system template.
 7. Status is text ("v2, verified", "Succeeded", "fixture, not verified"), not badges or dots.
 8. Capsules for actions, 9 to 12 pt radii for surfaces, matching the 14 pt window radius. No one-radius-for-everything.
 9. Motion is 140 ms ease-out on opacity, colour and transform. Nothing animates size. Progress is a 2 pt line.
@@ -51,8 +51,9 @@ match the window radius; a single dark or light "ink" for primary actions instea
 
 Composited glass measured against the wallpaper average (135,147,173): dark `#40444F`, light `#D1D6E0`.
 
-Type. SF Pro Text (`-apple-system`), antialiased. 11 (ids, shortcuts), 12 (secondary, mono outputs), 13 (rows, buttons),
-14 (titles, chat, panel tabs). SF Mono 11.5 to 12.5 for identifiers, step vocabulary and paths. The Northwind page uses its
+Type. Mona Sans (GitHub, SIL OFL, in `fonts/`), weights 400/500/600/700, body tracking -0.005em, titles -0.015em. 11 (ids,
+shortcuts), 12 to 13 (secondary), 14 (rows, buttons, body), 15 (panel tabs, chat), 16 (skill titles). In the app, bundle the
+TTF and register it with `CTFontManagerRegisterFontsForURL`; `Font.custom("Mona Sans", size:)` everywhere `Font.system` is listed below. SF Mono 11.5 to 12.5 for identifiers, step vocabulary and paths. The Northwind page uses its
 own scale (28 display, 18, 15, 14, 12), which is web content.
 
 Spacing. Sidebar 244 wide, padding 14. Rows 34 (tabs, address, inputs), buttons and pills 32, composer 44. Page card inset 12.
