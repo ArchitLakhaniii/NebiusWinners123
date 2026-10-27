@@ -1,0 +1,5 @@
+# Hermes agent: add BrowserSkills as an MCP server (stdio bridge).
+mcp_servers:
+  browserskills:
+    command: node
+    args: ["/ABSOLUTE/PATH/TO/NebiusWinners123/mcp-stdio/browserskills-mcp.mjs"]

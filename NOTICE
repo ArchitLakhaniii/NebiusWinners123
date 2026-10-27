@@ -1,0 +1,15 @@
+BrowserSkills
+Copyright (c) 2026 the NebiusWinners123 contributors
+
+Licensed under the GNU General Public License v3.0 (see LICENSE).
+
+Portions of this software are adapted from Nook (https://github.com/nook-browser/Nook),
+Copyright (c) the Nook contributors, licensed under GPL-3.0:
+  - app/Sources/BrowserSkills/MCP/MCPServer.swift          (from Nook/Managers/DevMCPServer/DevMCPServer.swift)
+  - app/Sources/BrowserSkills/AI/AIProvider.swift           (from Nook/Managers/AIManager/Providers/AIProvider.swift)
+  - app/Sources/BrowserSkills/AI/OpenAICompatibleProvider.swift (from Nook/Managers/AIManager/Providers/OpenAICompatibleProvider.swift)
+  - app/Sources/BrowserSkills/AI/Assistant.swift            (tool loop from Nook/Managers/AIManager/AIService.swift)
+  - app/Sources/BrowserSkills/Browser/Scripts.swift         (selector generation from Packages/NookWeb/.../DevPickerScript.swift)
+  - app/Sources/BrowserSkills/MCP/ToolRegistry.swift        (tool shapes from Nook/Managers/AIManager/Tools/BrowserTools.swift)
+
+This project was built with AI assistance (Devin).
