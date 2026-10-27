@@ -18,9 +18,9 @@ struct Demonstration {
 
     var origin: String? { URL(string: startURL).flatMap(Workflow.origin(of:)) }
 
-    /// Every selector the recording observed; compiled steps may use only these.
+    /// Every selector the recording observed or the user picked; compiled steps and outputs may use only these.
     var knownSelectors: Set<String> {
-        Set(actions.flatMap { [$0.selector].compactMap { $0 } + $0.fallbacks })
+        Set(actions.flatMap { [$0.selector].compactMap { $0 } + $0.fallbacks } + outputs.map(\.selector))
     }
 }
 
@@ -143,8 +143,10 @@ enum Compiler {
             guard let p = picked[o.name] else { return o }
             var o = o; o.selector = p.selector; o.many = p.many; return o
         }
-        if w.outputs.isEmpty {
-            w.outputs = demo.outputs.map { WorkflowOutput(name: $0.name, description: "", selector: $0.selector, many: $0.many) }
+        // A picked output the model renamed or dropped is still what the user asked for.
+        let present = Set(w.outputs.map(\.name))
+        w.outputs += demo.outputs.filter { !present.contains($0.name) }.map {
+            WorkflowOutput(name: $0.name, description: $0.sample.isEmpty ? $0.name : "e.g. \($0.sample.prefix(60))", selector: $0.selector, many: $0.many)
         }
         if w.verify.isEmpty {
             w.verify = w.outputs.filter(\.required).map { VerifyCheck(kind: .nonEmpty, output: $0.name, input: nil) }

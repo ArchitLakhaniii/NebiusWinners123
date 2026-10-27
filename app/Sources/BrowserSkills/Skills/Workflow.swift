@@ -64,6 +64,7 @@ struct Workflow: Codable, Hashable {
     var verify: [VerifyCheck]
 
     static let maxSteps = 40
+    static let maxTimeoutMs = 60_000
 
     /// Every problem that keeps this workflow from being stored. Empty means valid.
     /// `knownSelectors` are the selectors the recording produced; a compiled step may not
@@ -83,6 +84,7 @@ struct Workflow: Codable, Hashable {
         if let recordedOrigin, recordedOrigin != origin { out.append("origin \(origin) differs from the recorded origin \(recordedOrigin)") }
         let inputNames = Set(inputs.map(\.name))
         if inputNames.count != inputs.count { out.append("duplicate input names") }
+        let examples = Dictionary(inputs.map { ($0.name, $0.example) }, uniquingKeysWith: { a, _ in a })
         for input in inputs where !input.name.range(of: #"^[a-z][a-z0-9_]{0,39}$"#, options: .regularExpression).map({ _ in true }).orFalse {
             out.append("input name must be snake_case: \(input.name)")
         }
@@ -90,19 +92,25 @@ struct Workflow: Codable, Hashable {
             let at = "step \(i + 1) (\(step.kind.rawValue))"
             switch step.kind {
             case .navigate:
-                guard let raw = step.url, let url = URL(string: Self.fillTemplate(raw, with: Dictionary(uniqueKeysWithValues: inputs.map { ($0.name, $0.example) }))) else {
+                guard let raw = step.url, let url = URL(string: Self.fillTemplate(raw, with: examples, urlEncode: true)) else {
                     out.append("\(at): missing url"); continue
                 }
                 if Self.origin(of: url) != origin { out.append("\(at): navigates off the workflow origin to \(raw)") }
+                // The example may keep the URL on origin while another input would not; the host is never a template.
+                if Self.authority(of: raw).contains("{{") { out.append("\(at): url has a template in its scheme or host: \(raw)") }
             case .fill, .select, .click, .waitFor, .press:
                 guard let target = step.target, !target.selector.isEmpty else {
                     if step.kind != .press { out.append("\(at): missing target") }
                     continue
                 }
-                if let knownSelectors, !knownSelectors.contains(target.selector) {
-                    out.append("\(at): selector was not observed in the recording: \(target.selector)")
+                // The executor tries fallbacks when the selector misses, so they are constrained the same way.
+                if let knownSelectors {
+                    for selector in [target.selector] + target.fallbacks where !knownSelectors.contains(selector) {
+                        out.append("\(at): selector was not observed in the recording: \(selector)")
+                    }
                 }
             }
+            if let t = step.timeoutMs, !(0...Self.maxTimeoutMs).contains(t) { out.append("\(at): timeoutMs must be 0-\(Self.maxTimeoutMs)") }
             if step.kind == .fill || step.kind == .select, step.value == nil { out.append("\(at): missing value") }
             if step.kind == .press, step.key == nil { out.append("\(at): missing key") }
             for ref in Self.templateRefs(step.value) + Self.templateRefs(step.url) where !inputNames.contains(ref) {
@@ -110,6 +118,13 @@ struct Workflow: Codable, Hashable {
             }
         }
         let outputNames = Set(outputs.map(\.name))
+        if outputNames.count != outputs.count { out.append("duplicate output names") }
+        for output in outputs {
+            if output.selector.isEmpty { out.append("output \(output.name) has no selector") }
+            else if let knownSelectors, !knownSelectors.contains(output.selector) {
+                out.append("output \(output.name) reads a selector that was not observed or picked: \(output.selector)")
+            }
+        }
         for check in verify {
             if !outputNames.contains(check.output) { out.append("verify references unknown output \(check.output)") }
             if check.kind == .containsInput, !(check.input.map(inputNames.contains) ?? false) {
@@ -119,28 +134,50 @@ struct Workflow: Codable, Hashable {
         return out
     }
 
+    /// Scheme and host are compared case-insensitively, as browsers do.
     static func origin(of url: URL) -> String? {
-        guard let scheme = url.scheme, let host = url.host else { return nil }
+        guard let scheme = url.scheme?.lowercased(), let host = url.host?.lowercased(), !host.isEmpty else { return nil }
         let defaultPort = (scheme == "https" ? 443 : 80)
         if let port = url.port, port != defaultPort { return "\(scheme)://\(host):\(port)" }
         return "\(scheme)://\(host)"
     }
 
+    /// The part of a raw (possibly templated) URL between `://` and the path, query or fragment.
+    static func authority(of raw: String) -> String {
+        guard let schemeEnd = raw.range(of: "://") else { return "" }
+        return String(raw[schemeEnd.upperBound...].prefix { !"/?#".contains($0) })
+    }
+
+    private static let templateRegex = try! NSRegularExpression(pattern: #"\{\{\s*([a-zA-Z0-9_]+)\s*\}\}"#)
+
+    /// Characters that may stay literal inside one query value or path segment.
+    private static let urlValueAllowed = CharacterSet.alphanumerics.union(CharacterSet(charactersIn: "-._~"))
+
     static func templateRefs(_ text: String?) -> [String] {
         guard let text else { return [] }
-        let regex = try! NSRegularExpression(pattern: #"\{\{\s*([a-zA-Z0-9_]+)\s*\}\}"#)
-        return regex.matches(in: text, range: NSRange(text.startIndex..., in: text)).compactMap {
+        return templateRegex.matches(in: text, range: NSRange(text.startIndex..., in: text)).compactMap {
             Range($0.range(at: 1), in: text).map { String(text[$0]) }
         }
     }
 
+    /// Replaces every `{{name}}` whose input is known in one pass, so substituted values are never
+    /// re-scanned for templates and whitespace inside the braces is accepted like `templateRefs` does.
+    /// Unknown refs are left as written. With `urlEncode`, values are encoded as a single URL component.
     static func fillTemplate(_ text: String, with values: [String: String], urlEncode: Bool = false) -> String {
-        var out = text
-        for (k, v) in values {
-            let value = urlEncode ? (v.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? v) : v
-            out = out.replacingOccurrences(of: "{{\(k)}}", with: value)
-            out = out.replacingOccurrences(of: "{{ \(k) }}", with: value)
+        let ns = text as NSString
+        var out = ""
+        var cursor = 0
+        for match in templateRegex.matches(in: text, range: NSRange(location: 0, length: ns.length)) {
+            out += ns.substring(with: NSRange(location: cursor, length: match.range.location - cursor))
+            let name = ns.substring(with: match.range(at: 1))
+            if let v = values[name] {
+                out += urlEncode ? (v.addingPercentEncoding(withAllowedCharacters: urlValueAllowed) ?? v) : v
+            } else {
+                out += ns.substring(with: match.range)
+            }
+            cursor = match.range.location + match.range.length
         }
+        out += ns.substring(from: cursor)
         return out
     }
 
