@@ -122,7 +122,7 @@ final class ToolRegistry {
                     "outputs": v.workflow.outputs.map(\.name)]
         }
         let text = list.isEmpty ? "No validated skills yet. Teach one in the browser, or repeat a task twice."
-            : list.map { "\($0["tool"]!) — \($0["title"]!) on \($0["origin"]!)" }.joined(separator: "\n")
+            : list.map { "\($0["tool"]!) - \($0["title"]!) on \($0["origin"]!)" }.joined(separator: "\n")
         return ToolOutput(text: text, structured: ["skills": list])
     }
 
@@ -140,7 +140,7 @@ final class ToolRegistry {
         let before = tab.navigationCount
         tab.load(url)
         let ok = await tab.waitForLoad(since: before, timeout: 20)
-        return ToolOutput(text: ok ? "Opened \(tab.webView.url?.absoluteString ?? raw) — \(tab.webView.title ?? "")" : "Timed out loading \(raw)",
+        return ToolOutput(text: ok ? "Opened \(tab.webView.url?.absoluteString ?? raw) - \(tab.webView.title ?? "")" : "Timed out loading \(raw)",
                           isError: !ok, structured: ["url": tab.webView.url?.absoluteString ?? raw, "title": tab.webView.title ?? ""])
     }
 
@@ -148,11 +148,11 @@ final class ToolRegistry {
         guard tab.webView.url != nil else { return ToolOutput(text: "The agent tab is empty. Call browser_open first.", isError: true) }
         do {
             let page = try await tab.call(Scripts.describePage, ["maxText": max(200, min(maxText, 20000))]) as? [String: Any] ?? [:]
-            var lines = ["# \(page["title"] ?? "") — \(page["url"] ?? "")"]
+            var lines = ["# \(page["title"] ?? "") - \(page["url"] ?? "")"]
             for f in page["forms"] as? [[String: Any]] ?? [] {
                 lines.append("form \(f["ref"] ?? "") \(f["name"] ?? ""):")
                 for field in f["fields"] as? [[String: Any]] ?? [] {
-                    let secret = field["secret"] as? Bool == true ? " (secret — ask the user)" : ""
+                    let secret = field["secret"] as? Bool == true ? " (secret - ask the user)" : ""
                     let opts = (field["options"] as? [String]).map { " options: \($0.prefix(10).joined(separator: " | "))" } ?? ""
                     lines.append("  [\(field["ref"] ?? "")] \(field["type"] ?? "") “\(field["label"] ?? "")”\(secret)\(opts)")
                 }
@@ -185,7 +185,7 @@ final class ToolRegistry {
             try? await Task.sleep(for: .milliseconds(350))
             if tab.navigationCount > before || tab.webView.isLoading { _ = await tab.waitForLoad(since: before, timeout: 15) }
         }
-        return ToolOutput(text: "\(result["detail"] ?? action). Now at \(tab.webView.url?.absoluteString ?? "") — call page_describe to see the result.")
+        return ToolOutput(text: "\(result["detail"] ?? action). Now at \(tab.webView.url?.absoluteString ?? "") - call page_describe to see the result.")
     }
 
     private func read(selector: String, many: Bool) async -> ToolOutput {

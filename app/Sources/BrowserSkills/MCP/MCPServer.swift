@@ -12,6 +12,15 @@
 import Foundation
 import Network
 
+/// What the server exposes: ToolRegistry in the app, a fake in tests.
+@MainActor
+protocol MCPToolSource: AnyObject {
+    func definitions() -> [AIToolDefinition]
+    func call(_ name: String, _ args: [String: Any]) async -> ToolOutput
+}
+
+extension ToolRegistry: MCPToolSource {}
+
 @MainActor
 final class MCPServer: ObservableObject {
     @Published private(set) var running = false
@@ -21,13 +30,16 @@ final class MCPServer: ObservableObject {
     let port: UInt16
     let token: String
     let tokenFile: URL
-    private let registry: ToolRegistry
+    private let registry: any MCPToolSource
     private var listener: NWListener?
     private let queue = DispatchQueue(label: "browserskills.mcp")
 
     var endpoint: String { "http://127.0.0.1:\(port)/mcp" }
 
-    init(registry: ToolRegistry, port: UInt16, directory: URL) {
+    static let supportedProtocolVersions = ["2024-11-05", "2025-03-26", "2025-06-18"]
+    static let latestProtocolVersion = "2025-06-18"
+
+    init(registry: any MCPToolSource, port: UInt16, directory: URL) {
         self.registry = registry
         self.port = port
         tokenFile = directory.appendingPathComponent("mcp-token")
@@ -109,10 +121,18 @@ final class MCPServer: ObservableObject {
         conn.send(content: out, completion: .contentProcessed { _ in conn.cancel() })
     }
 
-    private func handle(_ req: HTTPRequest) async -> (Int, Data?, [String: String]) {
+    /// Only pages served from loopback may talk to the server (DNS-rebinding guard). A prefix
+    /// match is not enough: http://127.0.0.1.evil.example starts with http://127.0.0.1.
+    nonisolated static func isLoopbackOrigin(_ origin: String) -> Bool {
+        guard let url = URL(string: origin), let scheme = url.scheme?.lowercased(), ["http", "https"].contains(scheme),
+              let host = url.host?.lowercased(), !host.isEmpty else { return false }
+        return ["127.0.0.1", "localhost", "::1", "[::1]"].contains(host)
+    }
+
+    /// Transport-independent: one parsed HTTP request in, (status, body, extra headers) out.
+    func handle(_ req: HTTPRequest) async -> (Int, Data?, [String: String]) {
         // DNS-rebinding guard: browsers send Origin; only loopback pages may talk to us.
-        if let origin = req.headers["origin"], !origin.isEmpty,
-           !(origin.hasPrefix("http://127.0.0.1") || origin.hasPrefix("http://localhost")) {
+        if let origin = req.headers["origin"], !origin.isEmpty, !Self.isLoopbackOrigin(origin) {
             return (403, Self.rpcError(nil, -32600, "origin not allowed"), [:])
         }
         guard req.path.split(separator: "?").first == "/mcp" else { return (404, nil, [:]) }
@@ -124,19 +144,45 @@ final class MCPServer: ObservableObject {
         case "DELETE": return (200, nil, [:])
         default: return (405, nil, ["Allow": "POST, DELETE"])
         }
-        guard let msg = (try? JSONSerialization.jsonObject(with: req.body)) as? [String: Any] else {
+        guard let json = try? JSONSerialization.jsonObject(with: req.body, options: [.fragmentsAllowed]) else {
             return (400, Self.rpcError(nil, -32700, "parse error"), [:])
         }
+        let session = ["Mcp-Session-Id": "browserskills"]
+        if let batch = json as? [Any] {
+            guard !batch.isEmpty else { return (400, Self.rpcError(nil, -32600, "invalid request: empty batch"), [:]) }
+            var responses: [Data] = []
+            for message in batch {
+                if let response = await dispatch(message) { responses.append(Self.encode(response)) }
+            }
+            // A batch of only notifications or responses gets no body, like a single one.
+            guard !responses.isEmpty else { return (202, nil, [:]) }
+            return (200, Data("[".utf8) + Data(responses.joined(separator: Data(",".utf8))) + Data("]".utf8), session)
+        }
+        guard let response = await dispatch(json) else { return (202, nil, [:]) }
+        return (200, Self.encode(response), session)
+    }
+
+    /// One JSON-RPC message in, its response object out. Notifications and client responses
+    /// (messages without an id, or with a result/error instead of a method) get nil: no reply.
+    func dispatch(_ message: Any) async -> [String: Any]? {
+        guard let msg = message as? [String: Any] else { return Self.rpcErrorObject(nil, -32600, "invalid request: expected a JSON-RPC object") }
         let id = msg["id"]
-        let method = msg["method"] as? String ?? ""
+        if let id, !(id is String || id is NSNumber || id is NSNull) {
+            return Self.rpcErrorObject(nil, -32600, "invalid request: id must be a string or number")
+        }
+        if msg["method"] == nil, msg["result"] != nil || msg["error"] != nil { return nil }
+        guard msg["jsonrpc"] as? String == "2.0", let method = msg["method"] as? String else {
+            return Self.rpcErrorObject(id, -32600, "invalid request: jsonrpc must be \"2.0\" and method a string")
+        }
+        guard let id else { return nil }   // notification, e.g. notifications/initialized
         let params = msg["params"] as? [String: Any] ?? [:]
-        if id == nil { return (202, nil, [:]) }   // notification, e.g. notifications/initialized
 
         let result: Any
         switch method {
         case "initialize":
+            let requested = params["protocolVersion"] as? String ?? ""
             result = [
-                "protocolVersion": params["protocolVersion"] as? String ?? "2025-06-18",
+                "protocolVersion": Self.supportedProtocolVersions.contains(requested) ? requested : Self.latestProtocolVersion,
                 "capabilities": ["tools": ["listChanged": false]],
                 "serverInfo": ["name": "browserskills", "version": "0.1.0"],
                 "instructions": "BrowserSkills: a browser that caches workflows its user taught or repeated. skill_* tools replay verified procedures; browser_open/page_describe/page_act/page_read turn any webpage into tools. Everything runs in the browser's agent tab with the user's logins.",
@@ -146,25 +192,41 @@ final class MCPServer: ObservableObject {
         case "tools/list":
             result = ["tools": registry.definitions().map { ["name": $0.name, "description": $0.description, "inputSchema": $0.parameters] }]
         case "tools/call":
-            let name = params["name"] as? String ?? ""
+            // Unknown tools and malformed params are protocol errors; a tool that runs and fails is an isError result.
+            guard let name = params["name"] as? String, !name.isEmpty else { return Self.rpcErrorObject(id, -32602, "invalid params: name is required") }
+            guard registry.definitions().contains(where: { $0.name == name }) else { return Self.rpcErrorObject(id, -32602, "unknown tool: \(name)") }
+            let arguments: [String: Any]
+            switch params["arguments"] {
+            case nil, is NSNull: arguments = [:]
+            case let a as [String: Any]: arguments = a
+            default: return Self.rpcErrorObject(id, -32602, "invalid params: arguments must be an object")
+            }
             callCount += 1
-            let out = await registry.call(name, params["arguments"] as? [String: Any] ?? [:])
+            let out = await registry.call(name, arguments)
             var r: [String: Any] = ["content": [["type": "text", "text": out.text]], "isError": out.isError]
             if let s = out.structured, JSONSerialization.isValidJSONObject(s) { r["structuredContent"] = s }
             result = r
         default:
-            return (200, Self.rpcError(id, -32601, "method not found: \(method)"), [:])
+            return Self.rpcErrorObject(id, -32601, "method not found: \(method)")
         }
-        let body = (try? JSONSerialization.data(withJSONObject: ["jsonrpc": "2.0", "id": id!, "result": result])) ?? Self.rpcError(id, -32603, "unserializable result")
-        return (200, body, ["Mcp-Session-Id": "browserskills"])
+        return ["jsonrpc": "2.0", "id": id, "result": result]
+    }
+
+    nonisolated static func encode(_ response: [String: Any]) -> Data {
+        (try? JSONSerialization.data(withJSONObject: response)) ?? rpcError(response["id"], -32603, "unserializable result")
+    }
+
+    nonisolated static func rpcErrorObject(_ id: Any?, _ code: Int, _ message: String) -> [String: Any] {
+        ["jsonrpc": "2.0", "id": id ?? NSNull(), "error": ["code": code, "message": message]]
     }
 
     nonisolated static func rpcError(_ id: Any?, _ code: Int, _ message: String) -> Data {
-        (try? JSONSerialization.data(withJSONObject: ["jsonrpc": "2.0", "id": id ?? NSNull(), "error": ["code": code, "message": message]])) ?? Data()
+        (try? JSONSerialization.data(withJSONObject: rpcErrorObject(id, code, message))) ?? Data()
     }
 }
 
-/// A complete HTTP/1.1 request, or nil while more bytes are needed.
+/// A complete HTTP/1.1 request, or nil while more bytes are needed. Bodies may be sized by
+/// Content-Length or chunked; header names are case-insensitive.
 struct HTTPRequest {
     let method: String
     let path: String
@@ -173,7 +235,7 @@ struct HTTPRequest {
 
     init?(_ data: Data) {
         guard let sep = data.range(of: Data("\r\n\r\n".utf8)),
-              let head = String(data: data[..<sep.lowerBound], encoding: .utf8) else { return nil }
+              let head = String(data: data[data.startIndex..<sep.lowerBound], encoding: .utf8) else { return nil }
         var lines = head.components(separatedBy: "\r\n")
         let start = lines.removeFirst().split(separator: " ")
         guard start.count >= 2 else { return nil }
@@ -182,10 +244,35 @@ struct HTTPRequest {
             guard let colon = line.firstIndex(of: ":") else { continue }
             h[line[..<colon].lowercased()] = line[line.index(after: colon)...].trimmingCharacters(in: .whitespaces)
         }
-        let length = Int(h["content-length"] ?? "0") ?? 0
-        let bodyStart = sep.upperBound
-        guard data.count - bodyStart >= length else { return nil }
+        let rest = data[sep.upperBound...]
+        if h["transfer-encoding"]?.lowercased().contains("chunked") == true {
+            guard let decoded = Self.dechunk(rest) else { return nil }
+            body = decoded
+        } else {
+            // A missing, malformed or negative Content-Length means no body (never a crashing range).
+            let length = max(0, Int(h["content-length"] ?? "0") ?? 0)
+            guard rest.count >= length else { return nil }
+            body = Data(rest.prefix(length))
+        }
         method = String(start[0]); path = String(start[1]); headers = h
-        body = data.subdata(in: bodyStart..<(bodyStart + length))
+    }
+
+    /// Decodes a chunked body; nil until the terminating zero-size chunk (and its trailer line) is in.
+    private static func dechunk(_ data: Data) -> Data? {
+        let crlf = Data("\r\n".utf8)
+        var out = Data()
+        var i = data.startIndex
+        while true {
+            guard let lineEnd = data.range(of: crlf, in: i..<data.endIndex) else { return nil }
+            let sizeField = String(decoding: data[i..<lineEnd.lowerBound], as: UTF8.self).split(separator: ";").first ?? ""
+            guard let size = Int(sizeField.trimmingCharacters(in: .whitespaces), radix: 16) else { return Data() }
+            let chunkStart = lineEnd.upperBound
+            if size == 0 {
+                return data.range(of: Data("\r\n\r\n".utf8), in: lineEnd.lowerBound..<data.endIndex) == nil ? nil : out
+            }
+            guard data.endIndex - chunkStart >= size + 2 else { return nil }
+            out.append(data[chunkStart..<chunkStart + size])
+            i = chunkStart + size + 2
+        }
     }
 }
