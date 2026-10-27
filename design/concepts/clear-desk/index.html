@@ -21,24 +21,22 @@
       </div>
 
       <div class="address" title="northwind.example/orders?order=B-77">
-        <svg viewBox="0 0 16 16" aria-hidden="true"><rect x="3.5" y="7" width="9" height="6.5" rx="1.5"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg>
         <span class="host">northwind.example</span><span class="path">/orders</span>
       </div>
 
       <nav class="tabs" aria-label="Tabs">
         <a class="tab selected" href="#"><span class="favicon nw">N</span><span class="label">Order status</span><button class="close" aria-label="Close tab">×</button></a>
         <a class="tab" href="#"><span class="favicon nw">N</span><span class="label">Shipments, week 44</span><button class="close" aria-label="Close tab">×</button></a>
-        <a class="tab" href="#"><span class="favicon">S</span><span class="label">Nebius Token Factory, usage</span><button class="close" aria-label="Close tab">×</button></a>
-        <a class="tab" href="#"><span class="favicon">G</span><span class="label">Compiler prompt notes</span><button class="close" aria-label="Close tab">×</button></a>
-        <div class="hairline"></div>
-        <a class="tab agent" href="#"><span class="favicon agent-dot" aria-hidden="true"></span><span class="label">Agent tab <span class="dim">· 127.0.0.1</span></span><span class="progress-dot" aria-hidden="true"></span></a>
+        <a class="tab" href="#"><span class="favicon tf">T</span><span class="label">Token Factory usage</span><button class="close" aria-label="Close tab">×</button></a>
+        <a class="tab" href="#"><span class="favicon gh">G</span><span class="label">Compiler prompt notes</span><button class="close" aria-label="Close tab">×</button></a>
+        <div class="rule"></div>
+        <a class="tab agent" href="#"><span class="favicon agent" aria-hidden="true"></span><span class="label">Agent tab</span><span class="tab-meta">127.0.0.1</span></a>
       </nav>
 
       <div class="sidebar-foot">
-        <button class="newtab"><span class="plus">+</span> New tab <kbd>⌘T</kbd></button>
-        <div class="mcp" title="Streamable HTTP MCP on 127.0.0.1:4317">
-          <span class="live" aria-hidden="true"></span>
-          <span class="mcp-text"><strong>MCP live</strong> <span class="dim">· 14 calls</span></span>
+        <button class="newtab"><span class="plus">+</span>New tab<kbd>⌘T</kbd></button>
+        <div class="mcp">
+          <span class="mcp-line"><span class="mcp-title">MCP</span> serving 3 skills, 14 calls today</span>
           <span class="mcp-endpoint">127.0.0.1:4317/mcp</span>
         </div>
       </div>
@@ -85,12 +83,9 @@
         </div>
 
         <div class="suggest" role="status">
-          <div class="suggest-text">
-            <strong>You did this twice on northwind.example</strong>
-            <span>Look up an order number, read Status and Estimated delivery</span>
-          </div>
-          <button class="quiet" data-action="dismiss">Not now</button>
-          <button class="primary" data-action="adopt">Save as skill</button>
+          <span class="suggest-text"><strong>You did this twice on northwind.example.</strong> Save it as a skill?</span>
+          <button class="ghost" data-action="dismiss">Not now</button>
+          <button class="ink" data-action="adopt">Save as skill</button>
         </div>
       </div>
     </main>
@@ -104,30 +99,23 @@
         <button class="icon close-panel" aria-label="Close panel" data-action="closepanel"><svg viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8"/></svg></button>
       </div>
 
-      <!-- Skills -->
       <section class="pane skills" data-pane="skills">
         <div class="skill expanded">
           <button class="skill-head" aria-expanded="true">
             <span class="skill-title">Order status lookup</span>
-            <span class="skill-id">skill_order_status · northwind.example</span>
-            <span class="badge ok">v2 verified</span>
+            <span class="skill-sub">northwind.example <span class="sep">·</span> v2, verified</span>
           </button>
           <div class="skill-body">
-            <p class="meta">Compiled by nvidia/nemotron-3-super-120b-a12b</p>
             <label class="field"><span>order</span><input value="C-311" spellcheck="false"></label>
             <div class="row">
-              <button class="primary" data-action="run">Run</button>
-              <button class="quiet" data-action="watch">Watch</button>
+              <button class="ink" data-action="run">Run</button>
+              <button class="ghost" data-action="watch">Watch in agent tab</button>
               <span class="spacer"></span>
               <button class="icon" aria-label="Delete skill" title="Delete skill"><svg viewBox="0 0 16 16"><path d="M3.5 4.5h9M6.5 4.5V3h3v1.5M5 4.5l.6 8h4.8l.6-8"/></svg></button>
             </div>
             <div class="runline" aria-hidden="true"></div>
             <div class="run">
-              <div class="run-head">
-                <span class="badge ok">success</span>
-                <span class="dim mono">run 8f3a21c0</span>
-                <span class="dim">2.4 s</span>
-              </div>
+              <div class="run-head"><span class="ok">Succeeded</span><span class="sub">2.4 s, run 8f3a21c0</span></div>
               <dl class="outputs">
                 <div><dt>status</dt><dd>In transit</dd></div>
                 <div><dt>eta</dt><dd>Fri 30 Oct</dd></div>
@@ -138,49 +126,46 @@
               </ul>
               <a class="evidence" href="#">
                 <span class="thumb" aria-hidden="true"><i></i><i></i><i></i></span>
-                <span>Evidence screenshot <span class="dim">· after step 4</span></span>
+                <span>Evidence screenshot<span class="sub">after step 4</span></span>
               </a>
             </div>
             <details class="steps">
-              <summary>Steps <span class="dim">· 4</span></summary>
+              <summary>4 steps</summary>
               <ol>
                 <li><code>navigate</code> /orders</li>
-                <li><code>fill</code> Order number <span class="dim">{order}</span></li>
+                <li><code>fill</code> Order number <span class="sub">{order}</span></li>
                 <li><code>click</code> Look up</li>
                 <li><code>waitFor</code> #order-result</li>
               </ol>
             </details>
+            <p class="sub compiled">skill_order_status, compiled by nvidia/nemotron-3-super-120b-a12b</p>
           </div>
         </div>
 
         <div class="skill">
           <button class="skill-head" aria-expanded="false">
             <span class="skill-title">Flight status</span>
-            <span class="skill-id">skill_flight_status · northwind.example</span>
-            <span class="badge ok">v1 verified</span>
+            <span class="skill-sub">northwind.example <span class="sep">·</span> v1, verified</span>
           </button>
         </div>
         <div class="skill">
           <button class="skill-head" aria-expanded="false">
             <span class="skill-title">Inventory count</span>
-            <span class="skill-id">skill_inventory_count · northwind.example</span>
-            <span class="badge">fixture</span>
+            <span class="skill-sub">northwind.example <span class="sep">·</span> fixture, not verified</span>
           </button>
         </div>
 
         <div class="connect">
-          <h3>Connect an agent</h3>
-          <p>Point any MCP client at the browser. One tool per skill, plus <code>browser_open</code>, <code>page_describe</code>, <code>page_act</code> and <code>page_read</code> for any page.</p>
+          <p>Any MCP client can call these skills, and can work any open page through <code>page_describe</code> and <code>page_act</code>.</p>
           <div class="row">
-            <button class="quiet" data-action="copyconfig">Copy MCP config</button>
-            <button class="quiet">Reveal token file</button>
+            <button class="ghost" data-action="copyconfig">Copy MCP config</button>
+            <button class="ghost">Reveal token file</button>
           </div>
         </div>
       </section>
 
-      <!-- Teach -->
       <section class="pane teach" data-pane="teach">
-        <p class="meta">Recording from <span class="mono">northwind.example/orders</span></p>
+        <p class="sub">Recording from northwind.example/orders</p>
         <h3>Steps</h3>
         <ol class="rec-steps">
           <li><code>navigate</code><span>/orders</span><button class="icon remove" aria-label="Remove step">−</button></li>
@@ -192,60 +177,58 @@
         <div class="picked">
           <div class="pick">
             <input class="mono" value="status" spellcheck="false" aria-label="Result name">
-            <label class="check"><input type="checkbox"> list</label>
             <span class="sample">In transit</span>
+            <label class="check"><input type="checkbox"> list</label>
           </div>
           <div class="pick">
             <input class="mono" value="eta" spellcheck="false" aria-label="Result name">
-            <label class="check"><input type="checkbox"> list</label>
             <span class="sample">Fri 30 Oct</span>
+            <label class="check"><input type="checkbox"> list</label>
           </div>
         </div>
-        <button class="quiet" data-action="pick"><span class="pick-idle">Pick a result on the page</span><span class="pick-live">Click a result on the page</span></button>
+        <button class="ghost pickbtn" data-action="pick"><span class="pick-idle">Pick another result on the page</span><span class="pick-live">Click a result on the page</span></button>
         <label class="field hint"><span>What does this do</span><input value="Look up order status" placeholder="Optional"></label>
         <div class="row">
-          <button class="primary" data-action="save">Save skill</button>
-          <button class="quiet" data-action="discard">Discard</button>
+          <button class="ink" data-action="save">Save skill</button>
+          <button class="ghost" data-action="discard">Discard</button>
         </div>
-        <p class="meta">Nemotron compiles the recording, the agent tab replays it, and the skill is saved only if the replay passes its checks.</p>
+        <p class="sub">Nemotron compiles the recording, the agent tab replays it, and the skill is kept only if the replay passes its checks.</p>
       </section>
 
-      <!-- Assistant -->
       <section class="pane assistant" data-pane="assistant">
         <div class="chat">
           <div class="line user">What is the status of order C-311?</div>
           <div class="line tool">skill_order_status {"order": "C-311"}</div>
           <div class="line">Order C-311 is in transit with Northwind Freight, estimated delivery Fri 30 Oct. Verified by run 8f3a21c0 in 2.4 s.</div>
           <div class="line user">And how many units of SKU 4410 are left?</div>
-          <div class="line tool">page_describe http://127.0.0.1:4318/inventory</div>
+          <div class="line tool">page_describe 127.0.0.1:4318/inventory</div>
           <div class="line tool">page_act fill #sku "4410", click Look up</div>
           <div class="line busy" aria-live="polite"><span class="busyline" aria-hidden="true"></span>Reading the inventory page</div>
         </div>
         <form class="composer">
           <input placeholder="Ask Nemotron" aria-label="Ask Nemotron">
-          <button type="button" class="quiet" data-action="clear">Clear</button>
+          <button type="button" class="send" aria-label="Send"><svg viewBox="0 0 16 16"><path d="M8 13V3M4 7l4-4 4 4"/></svg></button>
         </form>
       </section>
 
-      <!-- Settings -->
       <section class="pane settings" data-pane="settings">
         <h3>Nemotron on Nebius Token Factory</h3>
         <div class="form">
           <label><span>API key</span><input type="password" value="nbs_live_4f7c2a9e1b" spellcheck="false"></label>
           <label><span>Base URL</span><input value="https://api.tokenfactory.nebius.com/v1/" spellcheck="false"></label>
-          <label><span>Compiler model</span><input value="nvidia/nemotron-3-super-120b-a12b" spellcheck="false"></label>
-          <label><span>Assistant model</span><input value="nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B" spellcheck="false"></label>
+          <label><span>Compiler</span><input value="nvidia/nemotron-3-super-120b-a12b" spellcheck="false"></label>
+          <label><span>Assistant</span><input value="nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B" spellcheck="false"></label>
         </div>
         <h3>Optional</h3>
         <div class="form">
-          <label><span>Tavily API key</span><input type="password" value="" placeholder="Enables web_search" spellcheck="false"></label>
+          <label><span>Tavily key</span><input type="password" value="" placeholder="Enables web_search" spellcheck="false"></label>
           <label><span>MCP port</span><input value="4317" inputmode="numeric"></label>
         </div>
         <div class="row">
-          <button class="primary" data-action="savesettings">Save</button>
+          <button class="ink" data-action="savesettings">Save</button>
           <span class="saved" role="status">Saved</span>
         </div>
-        <p class="meta">Stored in <span class="mono">~/Library/Application Support/BrowserSkills/settings.json</span> with mode 0600. <span class="mono">NEBIUS_API_KEY</span> in the environment overrides it.</p>
+        <p class="sub">Stored in ~/Library/Application Support/BrowserSkills/settings.json with mode 0600. NEBIUS_API_KEY in the environment overrides it.</p>
       </section>
     </aside>
   </div>
