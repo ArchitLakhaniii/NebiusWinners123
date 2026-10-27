@@ -1,7 +1,7 @@
 # BrowserSkills
 
 A lightweight, AI-native macOS browser that **caches the workflows you repeat**, replays them on demand,
-and **turns any webpage into MCP tools** — so agents use the web the way you already do, with your logins,
+and **turns any webpage into MCP tools**, so agents use the web the way you already do, with your logins,
 through one verified tool layer.
 
 Built for the Nebius x NVIDIA Global AI Hackathon (Personal AI track). Nemotron on Nebius Token Factory
@@ -19,8 +19,8 @@ compiles demonstrations into workflows and drives the built-in assistant. Browse
    only observed selectors, no secret fields), then replayed in the browser's agent tab. It is promoted to a
    runnable, versioned skill only if the replay's outputs pass their checks.
 4. **Exposes everything over MCP.** The app serves MCP on `http://127.0.0.1:4317/mcp` (bearer token):
-   - `skill_<name>` — one tool per verified skill, typed from its inputs, returning outputs + run evidence;
-   - `browser_open`, `page_describe`, `page_act`, `page_read` — make **any** page usable by an agent before
+   - `skill_<name>`: one tool per verified skill, typed from its inputs, returning outputs + run evidence;
+   - `browser_open`, `page_describe`, `page_act`, `page_read`: make **any** page usable by an agent before
      it has a skill (forms, fields and actions become refs to act on);
    - `skills_list`, `run_get`, and `web_search` (Tavily, optional).
 5. **Assistant.** A side panel where `nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B` calls the same tools.

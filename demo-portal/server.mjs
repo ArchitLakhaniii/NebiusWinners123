@@ -30,20 +30,20 @@ function inventory(q) {
   });
 }
 
-const page = (title, body) => `<!doctype html><html><head><meta charset="utf-8"><title>${esc(title)} · Acme Portal</title>
+const page = (title, body) => `<!doctype html><html><head><meta charset="utf-8"><title>${esc(title)} · Northwind</title>
 <style>body{font:15px -apple-system,system-ui,sans-serif;max-width:760px;margin:40px auto;padding:0 20px;color:#1d1d1f}
 nav a{margin-right:16px;color:#76b900;font-weight:600;text-decoration:none}h1{font-size:26px}form{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
 input,select,button{font:inherit;padding:8px 10px;border:1px solid #ccc;border-radius:8px}button{background:#76b900;color:#fff;border:0;font-weight:600;cursor:pointer}
 .card{border:1px solid #e5e5e5;border-radius:12px;padding:16px;margin:12px 0}dt{color:#666;font-size:13px}dd{margin:0 0 10px;font-size:17px;font-weight:600}
 table{border-collapse:collapse;width:100%}td,th{text-align:left;padding:8px;border-bottom:1px solid #eee}</style></head>
-<body><nav><a href="/">Acme Portal</a><a href="/orders">Order status</a><a href="/flights">Flight status</a><a href="/inventory">Inventory</a></nav>
+<body><nav><a href="/">Northwind</a><a href="/orders">Order status</a><a href="/flights">Flight status</a><a href="/inventory">Inventory</a></nav>
 <h1>${esc(title)}</h1>${body}<p style="color:#999;font-size:12px;margin-top:40px">Demo data changes every minute.</p></body></html>`;
 
 const routes = {
-  '/': () => page('Acme Portal', `<p>Three lookups people repeat every day. Do one twice in BrowserSkills and it will offer to cache it as a skill.</p>
-    <ul><li><a href="/orders">Order status</a> — order number → status, carrier, ETA</li>
-    <li><a href="/flights">Flight status</a> — airline + flight → state, gate</li>
-    <li><a href="/inventory">Inventory search</a> — keyword → products with live price and stock</li></ul>`),
+  '/': () => page('Northwind', `<p>Three lookups people repeat every day. Do one twice in BrowserSkills and it will offer to cache it as a skill.</p>
+    <ul><li><a href="/orders">Order status</a>: order number to status, carrier, ETA</li>
+    <li><a href="/flights">Flight status</a>: airline and flight to state, gate</li>
+    <li><a href="/inventory">Inventory search</a>: keyword to products with live price and stock</li></ul>`),
   '/orders': (q) => {
     const id = (q.get('order') || '').trim();
     const form = `<form action="/orders" method="get"><label for="order">Order number</label>

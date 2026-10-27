@@ -22,6 +22,7 @@ final class AppModel: ObservableObject {
     @Published private(set) var tabs: [BrowserTab] = []
     @Published var selectedID: UUID?
     @Published var panel: Panel = .skills
+    @Published var panelVisible = false
     @Published var status: String?
     @Published private(set) var compiling = false
 
@@ -57,6 +58,11 @@ final class AppModel: ObservableObject {
         newTab(url: homeURL)
     }
 
+    func show(_ p: Panel) {
+        panel = p
+        panelVisible = true
+    }
+
     var selected: BrowserTab? {
         if selectedID == agentTab.id { return agentTab }
         return tabs.first { $0.id == selectedID } ?? tabs.first
@@ -67,7 +73,7 @@ final class AppModel: ObservableObject {
     func newTab(url: URL? = nil) {
         let tab = BrowserTab()
         tab.onRecorded = { [weak self] action in self?.recorder.observe(action) }
-        tab.onPicked = { [weak self] body in self?.recorder.addPicked(body); self?.panel = .teach }
+        tab.onPicked = { [weak self] body in self?.recorder.addPicked(body); self?.show(.teach) }
         tab.onNavigated = { [weak self, weak tab] url in
             guard let self, let tab else { return }
             self.recorder.navigated(to: url, typed: self.typedLoads.remove(tab.id) != nil)
@@ -95,13 +101,13 @@ final class AppModel: ObservableObject {
     func startTeaching() {
         guard let tab = selected, !tab.isAgent else { return }
         recorder.startTeaching(at: tab.url)
-        panel = .teach
+        show(.teach)
     }
 
     func adoptSuggestion() {
         guard let s = recorder.suggestion else { return }
         recorder.adopt(s)
-        panel = .teach
+        show(.teach)
         status = "Mark the result fields on this page, then Save."
     }
 
@@ -128,7 +134,7 @@ final class AppModel: ObservableObject {
                 store.setStatus(.validated, skillID: version.skillID, version: version.version)
                 status = "Saved \(compiled.workflow.title) (v\(version.version), \(compiled.compiler)). It is now an MCP tool: skill_\(compiled.workflow.name)."
                 recorder.cancelTeaching()
-                panel = .skills
+                show(.skills)
             } else {
                 store.setStatus(.failedValidation, skillID: version.skillID, version: version.version)
                 status = "Replay did not verify (\(run.status.rawValue)): \(run.error ?? ""). Adjust the steps or outputs and save again."
