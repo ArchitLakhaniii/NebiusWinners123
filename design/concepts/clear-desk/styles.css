@@ -217,11 +217,12 @@ html[data-state="teach"] .pill .teach-live { display: inline; }
 html.picking .pickable { cursor: crosshair; }
 html.picking .pickable:hover { background: rgba(196, 83, 42, 0.08); }
 html[data-state="teach"] .pickable, .pickable.picked { box-shadow: inset 0 0 0 1.5px #c4532a; }
-.nw-order h1.pickable::after { left: calc(100% + 12px); top: 50%; transform: translateY(-50%); }
 html[data-state="teach"] .pickable::after, .pickable.picked::after {
   content: attr(data-pick); position: absolute; left: 0; top: -24px;
   font: 500 12px var(--mono); color: #fff; background: #c4532a; padding: 3px 8px; border-radius: 7px; letter-spacing: 0;
 }
+
+.nw-order h1.pickable::after { left: calc(100% + 12px) !important; top: 50% !important; transform: translateY(-50%); }
 
 /* Repeat suggestion, floating capsule */
 .suggest {
