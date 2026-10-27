@@ -26,7 +26,7 @@ final class WorkflowProblemsTests: XCTestCase {
                           VerifyCheck(kind: .containsInput, output: "status", input: "order_number")])
     }
 
-    private let known: Set<String> = ["#order", "form > button"]
+    private let known: Set<String> = ["#order", "form > button", "#order-status"]
 
     private func problems(_ w: Workflow, known: Set<String>? = nil, recorded: String? = nil) -> [String] {
         w.problems(knownSelectors: known, recordedOrigin: recorded)
@@ -150,7 +150,7 @@ final class WorkflowProblemsTests: XCTestCase {
         XCTAssertEqual(Workflow.origin(of: URL(string: "http://127.0.0.1:4318/orders?order=1")!), "http://127.0.0.1:4318")
         XCTAssertNil(Workflow.origin(of: URL(string: "about:blank")!))
         XCTAssertEqual(Workflow.fillTemplate("q={{a}}&r={{ a }}", with: ["a": "x y"]), "q=x y&r=x y")
-        XCTAssertEqual(Workflow.fillTemplate("q={{a}}", with: ["a": "x y&z"], urlEncode: true), "q=x%20y&z")
+        XCTAssertEqual(Workflow.fillTemplate("q={{a}}", with: ["a": "x y&z"], urlEncode: true), "q=x%20y%26z")
         XCTAssertEqual(Workflow.fillTemplate("{{b}}", with: ["a": "x"]), "{{b}}")
     }
 
@@ -277,7 +277,7 @@ final class FixtureCompilerTests: XCTestCase {
     }
 
     func testKnownSelectorsIncludeFallbacks() {
-        XCTAssertEqual(flightDemo().knownSelectors, ["#airline", "select[name=\"airline\"]", "#number", "form > button"])
+        XCTAssertEqual(flightDemo().knownSelectors, ["#airline", "select[name=\"airline\"]", "#number", "form > button", ".card dd", "#flight-state"])
     }
 }
 
