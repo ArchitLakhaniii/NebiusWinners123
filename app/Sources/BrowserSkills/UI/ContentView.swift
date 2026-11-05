@@ -4,36 +4,34 @@ import AppKit
 import SwiftUI
 import WebKit
 
-/// Two layers: translucent chrome (sidebar, optional panel) and the page as a floating card.
+/// One window material. The sidebar, the optional panel and the repeat strip sit directly on it;
+/// the page is an opaque card on top, like paper on a desk.
 struct ContentView: View {
     @EnvironmentObject var model: AppModel
 
     var body: some View {
-        ZStack(alignment: .bottomLeading) {
-            HStack(spacing: 0) {
-                Sidebar().frame(width: Theme.sidebarWidth)
+        HStack(spacing: 0) {
+            Sidebar().frame(width: Theme.sidebarWidth)
+            VStack(spacing: 0) {
+                RepeatStrip(recorder: model.recorder)
                 if let tab = model.selected {
                     WebViewHost(tab: tab)
-                        .clipShape(RoundedRectangle(cornerRadius: Theme.radius))
-                        .overlay(RoundedRectangle(cornerRadius: Theme.radius).stroke(Theme.hairline, lineWidth: 1))
-                        .shadow(color: .black.opacity(0.25), radius: 20, y: 8)
-                        .padding(.vertical, Theme.inset).padding(.trailing, Theme.inset)
-                }
-                if model.panelVisible {
-                    SidePanel()
-                        .frame(width: Theme.panelWidth)
-                        .background(Material(material: .popover, blending: .withinWindow))
-                        .clipShape(RoundedRectangle(cornerRadius: Theme.radius))
-                        .overlay(RoundedRectangle(cornerRadius: Theme.radius).stroke(Theme.hairline, lineWidth: 1))
-                        .padding(.vertical, Theme.inset).padding(.trailing, Theme.inset)
-                        .transition(.move(edge: .trailing).combined(with: .opacity))
+                        .background(Theme.page)
+                        .clipShape(RoundedRectangle(cornerRadius: Theme.pageRadius))
+                        .shadow(color: .black.opacity(0.30), radius: 3, y: 1)
+                        .padding(.bottom, Theme.inset).padding(.trailing, Theme.inset)
+                        .padding(.top, model.recorder.suggestion == nil ? Theme.inset : 0)
                 }
             }
-            ToastLayer(recorder: model.recorder)
+            if model.panelVisible {
+                SidePanel()
+                    .frame(width: Theme.panelWidth)
+                    .transition(.move(edge: .trailing).combined(with: .opacity))
+            }
         }
         .ignoresSafeArea()
         .background(Material(material: .sidebar, blending: .behindWindow).ignoresSafeArea())
-        .animation(Theme.quick, value: model.panelVisible)
+        .animation(Theme.panelMotion, value: model.panelVisible)
     }
 }
 
@@ -42,31 +40,43 @@ struct ContentView: View {
 struct Sidebar: View {
     @EnvironmentObject var model: AppModel
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Spacer()
-                Button { model.panelVisible.toggle() } label: { Image(systemName: "sidebar.right") }
-                    .iconButton().foregroundStyle(.tertiary).help("Show panel (⌥⌘P)")
-            }
-            .frame(height: 20).padding(.top, 8).padding(.trailing, 8).padding(.leading, 86)
+        VStack(alignment: .leading, spacing: 10) {
             if let tab = model.selected {
                 NavRow(tab: tab)
-                AddressField(tab: tab)
+                AddressPill(tab: tab)
             }
-            TeachRow(recorder: model.recorder)
             ScrollView {
-                VStack(alignment: .leading, spacing: 3) {
-                    Caption("Today").padding(.horizontal, 10).padding(.top, 6)
+                VStack(alignment: .leading, spacing: 2) {
+                    HStack {
+                        Caption("Today")
+                        Spacer()
+                        if model.tabs.count > 1 {
+                            Button("Clear") { model.closeOthers() }.buttonStyle(.plain)
+                                .font(.system(size: 12)).foregroundStyle(.secondary)
+                        }
+                    }
+                    .padding(.horizontal, 10).frame(height: 24).padding(.top, 4)
                     ForEach(model.tabs) { tab in TabRow(tab: tab) }
-                    Caption("Agent").padding(.horizontal, 10).padding(.top, 10)
-                    TabRow(tab: model.agentTab)
+                    Hairline().padding(.horizontal, 10).padding(.vertical, 8)
+                    AgentRow(tab: model.agentTab, executor: model.executor)
                 }
             }
             Spacer(minLength: 0)
+            TeachRow(recorder: model.recorder)
+            Button { model.newTab(url: model.homeURL) } label: {
+                HStack(spacing: 9) {
+                    Image(systemName: "plus").font(.system(size: 12, weight: .medium)).foregroundStyle(.secondary).frame(width: 16)
+                    Text("New tab").font(.system(size: 13))
+                    Spacer()
+                    Shortcut("⌘T")
+                }
+                .row()
+            }
+            .buttonStyle(.plain)
             Hairline().padding(.horizontal, 10)
-            MCPStatus(mcp: model.mcp)
+            MCPStatus(mcp: model.mcp, store: model.store)
         }
-        .padding(.horizontal, 10).padding(.bottom, 10)
+        .padding(.horizontal, 10).padding(.bottom, 12)
     }
 }
 
@@ -74,73 +84,61 @@ struct NavRow: View {
     @EnvironmentObject var model: AppModel
     @ObservedObject var tab: BrowserTab
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 14) {
             Button { tab.webView.goBack() } label: { Image(systemName: "chevron.left") }.disabled(!tab.canGoBack)
             Button { tab.webView.goForward() } label: { Image(systemName: "chevron.right") }.disabled(!tab.canGoForward)
-            Button { tab.webView.reload() } label: { Image(systemName: "arrow.clockwise").font(.system(size: 11, weight: .medium)) }
             Spacer()
-            Button { model.newTab(url: model.homeURL) } label: { Image(systemName: "plus") }.help("New tab (⌘T)")
+            Button { model.panelVisible.toggle() } label: { Image(systemName: "sidebar.right") }.help("Show panel (⌥⌘P)")
         }
         .iconButton().foregroundStyle(.secondary)
-        .padding(.horizontal, 6)
+        .padding(.leading, 86).padding(.trailing, 8).frame(height: 28).padding(.top, 10)
     }
 }
 
-struct AddressField: View {
+/// Host in medium, path in tertiary, reload at the trailing edge. Click to edit the full URL.
+struct AddressPill: View {
     @EnvironmentObject var model: AppModel
     @ObservedObject var tab: BrowserTab
     @State private var text = ""
+    @State private var editing = false
     @FocusState private var focused: Bool
-    var body: some View {
-        HStack(spacing: 8) {
-            Image(systemName: tab.url?.scheme == "https" ? "lock.fill" : "globe").font(.system(size: 10)).foregroundStyle(.secondary)
-            TextField("Search or enter address", text: $text)
-                .textFieldStyle(.plain).font(.system(size: 12.5, weight: .medium))
-                .focused($focused)
-                .onSubmit { model.go(text); focused = false }
-                .disabled(tab.isAgent)
-            if tab.isLoading { ProgressView().controlSize(.mini) }
-        }
-        .modifier(FieldChrome(focused: focused))
-        .onAppear { text = display(tab.url) }
-        .onChange(of: tab.url) { _, new in if !focused { text = display(new) } }
-        .onChange(of: tab.id) { _, _ in text = display(tab.url) }
-        .onChange(of: focused) { _, f in text = f ? (tab.url?.absoluteString ?? "") : display(tab.url) }
-    }
-    private func display(_ url: URL?) -> String {
-        guard let url else { return "" }
-        let host = url.host ?? ""
-        let path = url.path == "/" ? "" : url.path
-        return host.isEmpty ? url.absoluteString : host + path
-    }
-}
 
-struct TeachRow: View {
-    @EnvironmentObject var model: AppModel
-    @ObservedObject var recorder: Recorder
     var body: some View {
-        Button {
-            if recorder.teaching { model.show(.teach) } else { model.startTeaching() }
-        } label: {
-            HStack(spacing: 8) {
-                if recorder.teaching {
-                    StatusDot(color: Theme.danger, size: 8)
-                    Text("Recording").font(.system(size: 12.5, weight: .medium))
-                    Spacer()
-                    Text("\(recorder.actions.count) steps").font(.system(size: 11.5)).foregroundStyle(.secondary)
+        HStack(spacing: 6) {
+            if editing {
+                TextField("Enter address", text: $text)
+                    .textFieldStyle(.plain).font(.system(size: 13, weight: .medium))
+                    .focused($focused)
+                    .onSubmit { model.go(text); stop() }
+                    .onExitCommand { stop() }
+            } else {
+                Text(host).font(.system(size: 13, weight: .medium)).lineLimit(1)
+                Text(path).font(.system(size: 13)).foregroundStyle(.tertiary).lineLimit(1).truncationMode(.middle)
+                Spacer(minLength: 0)
+                if tab.isLoading {
+                    ProgressView().controlSize(.mini)
                 } else {
-                    Image(systemName: "record.circle").font(.system(size: 12)).foregroundStyle(.secondary)
-                    Text("Teach a skill").font(.system(size: 12.5, weight: .medium)).foregroundStyle(.secondary)
-                    Spacer()
-                    Text("⇧⌘R").font(.system(size: 11)).foregroundStyle(.tertiary)
+                    Button { tab.webView.reload() } label: { Image(systemName: "arrow.clockwise").font(.system(size: 11, weight: .medium)) }
+                        .buttonStyle(.borderless).foregroundStyle(.tertiary)
                 }
             }
-            .padding(.horizontal, 12).frame(height: 32)
-            .background(RoundedRectangle(cornerRadius: 9).fill(recorder.teaching ? Theme.danger.opacity(0.12) : .clear))
         }
-        .buttonStyle(.plain)
-        .help(recorder.teaching ? "Open the recording" : "Record a procedure to save as a skill")
+        .modifier(FieldChrome(radius: Theme.pillRadius, height: 32))
+        .contentShape(RoundedRectangle(cornerRadius: Theme.pillRadius))
+        .onTapGesture { if !editing, !tab.isAgent { text = tab.url?.absoluteString ?? ""; editing = true; focused = true } }
+        .onChange(of: focused) { _, f in if !f { editing = false } }
+        .onChange(of: tab.id) { _, _ in stop() }
     }
+
+    private var host: String {
+        guard let url = tab.url else { return tab.isAgent ? "Agent tab" : "New tab" }
+        return url.host.map { $0 + (url.port.map { ":\($0)" } ?? "") } ?? url.absoluteString
+    }
+    private var path: String {
+        guard let url = tab.url, url.host != nil, url.path != "/" || url.query != nil else { return "" }
+        return url.path + (url.query.map { "?" + $0 } ?? "")
+    }
+    private func stop() { editing = false; focused = false }
 }
 
 struct TabRow: View {
@@ -150,19 +148,12 @@ struct TabRow: View {
     var body: some View {
         let selected = model.selectedID == tab.id || (model.selectedID == nil && model.tabs.first?.id == tab.id)
         HStack(spacing: 9) {
-            if tab.isAgent {
-                StatusDot(color: Theme.accent)
-            } else {
-                Image(systemName: "globe").font(.system(size: 12)).foregroundStyle(selected ? .primary : .secondary)
-            }
-            Text(tab.isAgent ? (tab.url?.host ?? "idle") : tab.title)
-                .font(.system(size: 12.5, weight: selected ? .medium : .regular))
-                .foregroundStyle(selected || tab.isAgent ? AnyShapeStyle(.primary) : AnyShapeStyle(.secondary))
-                .lineLimit(1)
+            Image(systemName: "globe").font(.system(size: 11, weight: .medium)).foregroundStyle(.secondary)
+                .frame(width: 16, height: 16).background(RoundedRectangle(cornerRadius: 4).fill(Theme.control))
+            Text(tab.title).font(.system(size: 13)).lineLimit(1)
+                .foregroundStyle(selected ? AnyShapeStyle(.primary) : AnyShapeStyle(.secondary))
             Spacer(minLength: 4)
-            if tab.isAgent {
-                Text(selected ? "Watching" : "Watch").font(.system(size: 11.5, weight: .medium)).foregroundStyle(Theme.accent)
-            } else if tab.isLoading {
+            if tab.isLoading {
                 ProgressView().controlSize(.mini)
             } else if hover || selected {
                 Button { model.close(tab) } label: { Image(systemName: "xmark").font(.system(size: 10, weight: .medium)) }
@@ -175,86 +166,96 @@ struct TabRow: View {
     }
 }
 
+/// The hidden tab skills run in. Its state is a word at the trailing edge, accent only while it works.
+struct AgentRow: View {
+    @EnvironmentObject var model: AppModel
+    @ObservedObject var tab: BrowserTab
+    @ObservedObject var executor: Executor
+    var body: some View {
+        let selected = model.selectedID == tab.id
+        let busy = executor.current != nil
+        HStack(spacing: 9) {
+            Image(systemName: "sparkles").font(.system(size: 10, weight: .medium)).foregroundStyle(busy ? AnyShapeStyle(Theme.accent) : AnyShapeStyle(.secondary))
+                .frame(width: 16, height: 16).background(RoundedRectangle(cornerRadius: 4).fill(Theme.control))
+            Text("Agent tab").font(.system(size: 13)).foregroundStyle(selected ? AnyShapeStyle(.primary) : AnyShapeStyle(.secondary))
+            Spacer(minLength: 4)
+            Text(busy ? "replaying" : "idle").font(.system(size: 11)).foregroundStyle(busy ? AnyShapeStyle(Theme.accent) : AnyShapeStyle(.tertiary))
+        }
+        .row(active: selected)
+        .onTapGesture { model.selectedID = tab.id }
+        .help("Skills replay here with your normal logins")
+    }
+}
+
+struct TeachRow: View {
+    @EnvironmentObject var model: AppModel
+    @ObservedObject var recorder: Recorder
+    var body: some View {
+        Button {
+            if recorder.teaching { model.show(.teach) } else { model.startTeaching() }
+        } label: {
+            HStack(spacing: 9) {
+                Image(systemName: recorder.teaching ? "record.circle.fill" : "record.circle")
+                    .font(.system(size: 13, weight: .regular))
+                    .foregroundStyle(recorder.teaching ? AnyShapeStyle(Theme.accent) : AnyShapeStyle(.secondary)).frame(width: 16)
+                Text(recorder.teaching ? "Recording, \(recorder.actions.count) step\(recorder.actions.count == 1 ? "" : "s")" : "Teach a skill").font(.system(size: 13))
+                Spacer()
+                if recorder.teaching {
+                    Button("Stop") { model.show(.teach) }.buttonStyle(.plain).font(.system(size: 12)).foregroundStyle(.secondary)
+                } else {
+                    Shortcut("⇧⌘R")
+                }
+            }
+            .row(active: recorder.teaching)
+        }
+        .buttonStyle(.plain)
+        .help(recorder.teaching ? "Open the recording" : "Record a procedure once to save it as a skill")
+    }
+}
+
+/// Two lines of text, no indicator shape.
 struct MCPStatus: View {
     @ObservedObject var mcp: MCPServer
+    @ObservedObject var store: SkillStore
     var body: some View {
-        HStack(spacing: 8) {
-            StatusDot(color: mcp.running ? Theme.accent : Theme.danger)
-            Text(mcp.running ? "MCP  \(mcp.endpoint.replacingOccurrences(of: "http://", with: "").replacingOccurrences(of: "/mcp", with: ""))" : "MCP off")
-                .font(.system(size: 11.5)).foregroundStyle(.secondary).lineLimit(1)
-            Spacer()
-            if mcp.callCount > 0 { Text("\(mcp.callCount) calls").font(.system(size: 11.5)).foregroundStyle(.tertiary) }
+        VStack(alignment: .leading, spacing: 3) {
+            Text(mcp.running ? "MCP serving \(store.skills.count) skill\(store.skills.count == 1 ? "" : "s")" : "MCP off")
+                .font(.system(size: 12, weight: .medium)).foregroundStyle(.secondary)
+            Text("\(mcp.callCount) call\(mcp.callCount == 1 ? "" : "s") today · \(mcp.endpoint.replacingOccurrences(of: "http://", with: "").replacingOccurrences(of: "/mcp", with: ""))")
+                .font(.system(size: 11)).foregroundStyle(.tertiary).lineLimit(1)
         }
-        .row()
+        .padding(.horizontal, 10).padding(.top, 6)
         .help(mcp.lastError ?? mcp.endpoint)
     }
 }
 
 // MARK: Repeat suggestion
 
-struct SuggestionToast: View {
+/// A 36pt strip above the page, not a floating toast: it is part of the desk, so it never covers content.
+struct RepeatStrip: View {
     @EnvironmentObject var model: AppModel
     @ObservedObject var recorder: Recorder
     var body: some View {
         if let s = recorder.suggestion {
-            HStack(spacing: 12) {
-                Image(systemName: "repeat").font(.system(size: 13, weight: .semibold)).foregroundStyle(Theme.accent)
-                    .frame(width: 32, height: 32).background(RoundedRectangle(cornerRadius: 8).fill(Theme.accent.opacity(0.16)))
-                VStack(alignment: .leading, spacing: 3) {
-                    Text("You did this \(s.times == 2 ? "twice" : "\(s.times) times") on \(s.host)").font(.system(size: 13, weight: .semibold))
-                    Text(s.actions.prefix(3).map(\.summary).joined(separator: ", ")).font(.system(size: 12)).foregroundStyle(.secondary).lineLimit(1)
-                }
+            HStack(spacing: 10) {
+                Image(systemName: "arrow.triangle.2.circlepath").font(.system(size: 12, weight: .semibold)).foregroundStyle(Theme.accent)
+                Text("You did this \(s.times == 2 ? "twice" : "\(s.times) times") on \(s.host)").font(.system(size: 13, weight: .medium))
+                Text(describe(s.actions)).font(.system(size: 13)).foregroundStyle(.secondary).lineLimit(1)
                 Spacer(minLength: 16)
-                Button("Save as skill") { model.adoptSuggestion() }.buttonStyle(PillButtonStyle(primary: true))
                 Button("Not now") { recorder.dismissSuggestion() }.buttonStyle(PlainActionStyle())
+                Button("Save as skill") { model.adoptSuggestion() }.buttonStyle(AccentButtonStyle())
             }
-            .padding(.leading, 12).padding(.trailing, 14).padding(.vertical, 12)
-            .frame(maxWidth: 600)
-            .background(RoundedRectangle(cornerRadius: 12).fill(Color(nsColor: .windowBackgroundColor)))
-            .overlay(RoundedRectangle(cornerRadius: 12).stroke(Theme.hairline, lineWidth: 1))
-            .shadow(color: .black.opacity(0.28), radius: 20, y: 8)
-            .padding(28)
-            .transition(.move(edge: .bottom).combined(with: .opacity))
-            .animation(Theme.quick, value: s.times)
+            .padding(.leading, 8).padding(.trailing, Theme.inset)
+            .frame(height: 48)
+            .transition(.opacity)
         }
     }
-}
 
-struct ToastLayer: View {
-    @EnvironmentObject var model: AppModel
-    @ObservedObject var recorder: Recorder
-    var body: some View {
-        AboveWebContent(active: recorder.suggestion != nil) { SuggestionToast(recorder: recorder).environmentObject(model) }
-            .fixedSize()
-            .padding(.leading, Theme.sidebarWidth - 8)
+    private func describe(_ actions: [RecordedAction]) -> String {
+        let fields = actions.filter { $0.type == "fill" || $0.type == "select" }.compactMap(\.label)
+        if fields.isEmpty { return "Same steps, different values" }
+        return "Same fields, different \(fields.first!.lowercased())\(fields.first!.lowercased().hasSuffix("s") ? "" : "s")"
     }
-}
-
-/// Puts SwiftUI content in its own NSView so it sits above the WKWebView in AppKit hit testing.
-/// Without this, clicks on anything drawn over the page land in the web view.
-struct AboveWebContent<Content: View>: NSViewRepresentable {
-    let active: Bool
-    let content: Content
-    init(active: Bool, @ViewBuilder content: () -> Content) { self.active = active; self.content = content() }
-
-    func makeNSView(context: Context) -> PassthroughHostingView<Content> {
-        let host = PassthroughHostingView(rootView: content)
-        host.sizingOptions = .intrinsicContentSize
-        host.active = active
-        return host
-    }
-
-    func updateNSView(_ host: PassthroughHostingView<Content>, context: Context) {
-        host.rootView = content
-        host.active = active
-    }
-}
-
-final class PassthroughHostingView<Content: View>: NSHostingView<Content> {
-    var active = false
-    required init(rootView: Content) { super.init(rootView: rootView) }
-    @available(*, unavailable) required init?(coder: NSCoder) { fatalError("not used") }
-    override func hitTest(_ point: NSPoint) -> NSView? { active ? super.hitTest(point) : nil }
 }
 
 /// Hosts a tab's WKWebView. The agent web view goes back to its parking window when hidden.

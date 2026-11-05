@@ -3,6 +3,7 @@
 import AppKit
 import SwiftUI
 
+/// Right column on the window material: a segmented control, then one panel.
 struct SidePanel: View {
     @EnvironmentObject var model: AppModel
     var body: some View {
@@ -15,42 +16,42 @@ struct SidePanel: View {
                     Button { model.status = nil } label: { Image(systemName: "xmark").font(.system(size: 10, weight: .medium)) }
                         .buttonStyle(.borderless).foregroundStyle(.tertiary)
                 }
-                .padding(10).background(RoundedRectangle(cornerRadius: Theme.rowRadius).fill(Theme.fill))
-                .padding(.horizontal, 12).padding(.bottom, 8)
+                .padding(10).background(RoundedRectangle(cornerRadius: Theme.rowRadius).fill(Theme.control))
+                .padding(.horizontal, 12).padding(.bottom, 10)
             }
-            switch model.panel {
-            case .skills: SkillsPanel(store: model.store, executor: model.executor)
-            case .teach: TeachPanel(recorder: model.recorder)
-            case .assistant: AssistantPanel(assistant: model.assistant)
-            case .settings: SettingsPanel(initial: model.settings)
+            Group {
+                switch model.panel {
+                case .skills: SkillsPanel(store: model.store, executor: model.executor)
+                case .teach: TeachPanel(recorder: model.recorder)
+                case .assistant: AssistantPanel(assistant: model.assistant)
+                case .settings: SettingsPanel(initial: model.settings)
+                }
             }
+            .id(model.panel)
+            .transition(.opacity)
         }
+        .animation(.easeOut(duration: 0.15), value: model.panel)
     }
 }
 
-/// Text tabs with a hairline underline. Teach appears only while a recording exists.
+/// Segmented control, 28pt: control fill outer, control-2 selected segment.
 struct PanelTabs: View {
     @EnvironmentObject var model: AppModel
     var body: some View {
-        let tabs: [Panel] = model.recorder.teaching || model.panel == .teach ? [.skills, .teach, .assistant, .settings] : [.skills, .assistant, .settings]
-        HStack(spacing: 16) {
-            ForEach(tabs) { p in
-                Button { withAnimation(Theme.quick) { model.panel = p } } label: {
-                    Text(p.rawValue).font(.system(size: 12.5, weight: model.panel == p ? .semibold : .medium))
+        HStack(spacing: 2) {
+            ForEach(Panel.allCases) { p in
+                Button { model.panel = p } label: {
+                    Text(p.rawValue).font(.system(size: 12.5, weight: .medium))
                         .foregroundStyle(model.panel == p ? AnyShapeStyle(.primary) : AnyShapeStyle(.secondary))
-                        .overlay(alignment: .bottom) {
-                            Rectangle().fill(model.panel == p ? Color.primary : .clear).frame(height: 1.5).offset(y: 9)
-                        }
+                        .frame(maxWidth: .infinity).frame(height: 24)
+                        .background(RoundedRectangle(cornerRadius: 6).fill(model.panel == p ? Theme.control2 : .clear))
                 }
                 .buttonStyle(.plain)
             }
-            Spacer()
-            Button { model.panelVisible = false } label: { Image(systemName: "xmark").font(.system(size: 11, weight: .medium)) }
-                .buttonStyle(.borderless).foregroundStyle(.tertiary)
         }
-        .padding(.horizontal, 14).padding(.top, 14).padding(.bottom, 8)
-        .overlay(alignment: .bottom) { Hairline() }
-        .padding(.bottom, 10)
+        .padding(2)
+        .background(RoundedRectangle(cornerRadius: 8).fill(Theme.control))
+        .padding(.horizontal, 12).padding(.top, 12).padding(.bottom, 14)
     }
 }
 
@@ -64,52 +65,43 @@ struct SkillsPanel: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack {
-                Text(store.skills.isEmpty ? "No skills yet" : "\(store.skills.count) skill\(store.skills.count == 1 ? "" : "s")")
-                    .font(.system(size: 12)).foregroundStyle(.secondary)
-                Spacer()
-                Button { model.startTeaching() } label: { Label("Teach", systemImage: "plus") }.buttonStyle(PillButtonStyle(small: true))
-            }
-            .padding(.horizontal, 14).padding(.bottom, 8)
             ScrollView {
-                VStack(alignment: .leading, spacing: 4) {
-                    if let run = executor.current {
-                        HStack(spacing: 8) {
-                            ProgressView().controlSize(.mini)
-                            Text("Running \(store.skills.first { $0.id == run.skillID }?.title ?? "skill")").font(.system(size: 12, weight: .medium))
-                            Text(executor.currentStep ?? "").font(.system(size: 11.5)).foregroundStyle(.secondary).lineLimit(1)
-                        }
-                        .padding(.horizontal, 10).padding(.vertical, 6)
-                    }
+                VStack(alignment: .leading, spacing: 0) {
                     if store.skills.isEmpty {
-                        Text("Do a task twice and BrowserSkills offers to save it. Or press Teach and do it once. Every saved skill becomes an MCP tool.")
-                            .font(.system(size: 12.5)).foregroundStyle(.secondary).padding(10)
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("No skills yet").font(.system(size: 14, weight: .medium))
+                            Text("Do a task twice and the browser offers to save it. Or press Teach a skill and do it once. Every saved skill becomes an MCP tool.")
+                                .font(.system(size: 13)).foregroundStyle(.secondary)
+                            Button("Teach a skill") { model.startTeaching() }.buttonStyle(ControlButtonStyle()).padding(.top, 4)
+                        }
+                        .padding(.horizontal, 12).padding(.bottom, 12)
                     }
-                    ForEach(store.skills) { skill in
-                        SkillRow(skill: skill, expanded: expanded == skill.id) {
-                            withAnimation(Theme.quick) { expanded = expanded == skill.id ? nil : skill.id }
+                    ForEach(Array(store.skills.enumerated()), id: \.element.id) { i, skill in
+                        if i > 0 { Hairline().padding(.horizontal, 12) }
+                        SkillRow(skill: skill, expanded: expanded == skill.id || (expanded == nil && i == 0 && store.skills.count == 1)) {
+                            expanded = expanded == skill.id ? nil : skill.id
                         }
                     }
                 }
-                .padding(.horizontal, 10)
             }
             .id(store.revision)
-            Hairline().padding(.horizontal, 14)
-            HStack(spacing: 10) {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Connect an agent").font(.system(size: 12.5, weight: .medium))
-                    Text("Hermes, Claude Code, Cursor").font(.system(size: 11.5)).foregroundStyle(.secondary)
+            Spacer(minLength: 0)
+            Hairline().padding(.horizontal, 12)
+            VStack(alignment: .leading, spacing: 6) {
+                Text("Connect an agent").font(.system(size: 14, weight: .medium))
+                Text("Point any MCP client at the browser. One tool per skill, plus browser_open, page_describe, page_act and page_read for any page.")
+                    .font(.system(size: 12.5)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                HStack(spacing: 8) {
+                    Button("Copy MCP config") {
+                        NSPasteboard.general.clearContents()
+                        NSPasteboard.general.setString(model.mcpConfigJSON, forType: .string)
+                        model.status = "Copied the MCP config. It contains the bearer token, so treat it like a password."
+                    }
+                    Button("Reveal token file") { NSWorkspace.shared.activateFileViewerSelecting([model.mcp.tokenFile]) }
                 }
-                Spacer()
-                Button {
-                    NSPasteboard.general.clearContents()
-                    NSPasteboard.general.setString(model.mcpConfigJSON, forType: .string)
-                    model.status = "Copied the MCP config. It contains the bearer token, so treat it like a password."
-                } label: { Label("Copy config", systemImage: "doc.on.doc") }
-                .buttonStyle(PillButtonStyle(small: true))
-                .contextMenu { Button("Reveal token file") { NSWorkspace.shared.activateFileViewerSelecting([model.mcp.tokenFile]) } }
+                .buttonStyle(ControlButtonStyle()).padding(.top, 6)
             }
-            .padding(14)
+            .padding(12)
         }
     }
 }
@@ -122,82 +114,95 @@ struct SkillRow: View {
     @State private var inputs: [String: String] = [:]
     @State private var lastRun: RunRecord?
     @State private var running = false
+    @State private var showSteps = false
 
     var body: some View {
         let versions = model.store.versions(skillID: skill.id)
         let active = model.store.activeVersion(of: skill)
         let shown = active ?? versions.first
         VStack(alignment: .leading, spacing: 0) {
-            HStack(spacing: 10) {
-                VStack(alignment: .leading, spacing: 2) {
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                Image(systemName: expanded ? "chevron.down" : "chevron.right").font(.system(size: 10, weight: .semibold)).foregroundStyle(.tertiary).frame(width: 10)
+                VStack(alignment: .leading, spacing: 3) {
                     Text(skill.title).font(.system(size: 13, weight: .medium))
-                    Text("skill_\(skill.name)").font(.system(size: 11, design: .monospaced)).foregroundStyle(.tertiary)
+                    HStack(spacing: 8) {
+                        Text("skill_\(skill.name)").mono(11.5).foregroundStyle(.secondary)
+                        Text(URL(string: skill.origin)?.host ?? skill.origin).font(.system(size: 11.5)).foregroundStyle(.tertiary)
+                    }
+                    .lineLimit(1)
                 }
                 Spacer()
-                if active != nil {
-                    StatusLabel(text: "Verified", color: Theme.accent)
-                    if !expanded, let n = runCount(), n > 0 { Text("\(n) run\(n == 1 ? "" : "s")").font(.system(size: 11.5)).foregroundStyle(.tertiary) }
-                } else if let v = versions.first {
-                    StatusLabel(text: statusText(v.status), color: Theme.warning)
-                }
+                Text(statusText(active: active, latest: versions.first)).font(.system(size: 11, weight: .medium)).foregroundStyle(.tertiary)
             }
-            .padding(.horizontal, 10).padding(.vertical, 9)
+            .padding(.horizontal, 12).padding(.vertical, 10)
             .contentShape(Rectangle()).onTapGesture(perform: toggle)
             if expanded, let v = shown {
                 VStack(alignment: .leading, spacing: 10) {
                     ForEach(v.workflow.inputs, id: \.name) { input in
-                        HStack {
-                            Text(input.name).font(.system(size: 11.5, design: .monospaced)).foregroundStyle(.secondary)
-                            Spacer()
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(input.name).font(.system(size: 12)).foregroundStyle(.secondary)
                             TextField(input.example, text: Binding(get: { inputs[input.name] ?? input.example }, set: { inputs[input.name] = $0 }))
-                                .textFieldStyle(.plain).font(.system(size: 12.5)).multilineTextAlignment(.trailing)
+                                .textFieldStyle(.plain).font(.system(size: 13)).modifier(FieldChrome(height: 30))
                         }
-                        .padding(.horizontal, 10).frame(height: 30)
-                        .background(RoundedRectangle(cornerRadius: Theme.rowRadius).fill(Theme.fill))
                     }
                     HStack(spacing: 8) {
-                        Button {
+                        Button(running ? "Running" : "Run") {
                             running = true
                             let values = Dictionary(v.workflow.inputs.map { ($0.name, inputs[$0.name] ?? $0.example) }, uniquingKeysWith: { a, _ in a })
                             Task {
                                 lastRun = await model.executor.run(skill: skill, inputs: values, dedupe: false)
                                 running = false
                             }
-                        } label: { Label(running ? "Running" : "Run", systemImage: "play.fill") }
-                        .buttonStyle(PillButtonStyle(primary: true, small: true)).disabled(running || active == nil)
-                        Button { model.selectedID = model.agentTab.id } label: { Label("Watch", systemImage: "eye") }
-                            .buttonStyle(PillButtonStyle(small: true))
+                        }
+                        .buttonStyle(AccentButtonStyle()).disabled(running || active == nil)
+                        Button("Watch") { model.selectedID = model.agentTab.id }.buttonStyle(ControlButtonStyle())
                         Spacer()
-                        if let r = lastRun ?? model.store.runs(skillID: skill.id, limit: 1).first, let f = r.finished {
-                            Text(String(format: "%.1f s", f.timeIntervalSince(r.started))).font(.system(size: 11.5)).foregroundStyle(.tertiary)
-                            if let shot = r.screenshot {
-                                Button("Screenshot") { NSWorkspace.shared.open(URL(fileURLWithPath: shot)) }
-                                    .buttonStyle(.plain).font(.system(size: 11.5, weight: .medium)).foregroundStyle(Theme.accent)
+                        Button { model.store.delete(skillID: skill.id) } label: { Image(systemName: "trash").font(.system(size: 12)) }
+                            .buttonStyle(.borderless).foregroundStyle(.tertiary).help("Delete skill")
+                    }
+                    if let r = lastRun ?? model.store.runs(skillID: skill.id, limit: 1).first { RunView(run: r) }
+                    Button { showSteps.toggle() } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: showSteps ? "chevron.down" : "chevron.right").font(.system(size: 9, weight: .semibold))
+                            Text("Steps (\(v.workflow.steps.count))").font(.system(size: 12))
+                        }
+                        .foregroundStyle(.secondary)
+                    }
+                    .buttonStyle(.plain)
+                    if showSteps {
+                        VStack(alignment: .leading, spacing: 4) {
+                            ForEach(Array(v.workflow.steps.enumerated()), id: \.offset) { i, step in
+                                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                                    Text("\(i + 1)").mono(11).foregroundStyle(.tertiary).frame(width: 14, alignment: .trailing)
+                                    Text(step.kind.rawValue).mono(11.5).foregroundStyle(.secondary).frame(width: 52, alignment: .leading)
+                                    Text(stepTarget(step)).font(.system(size: 12.5)).lineLimit(1).truncationMode(.middle)
+                                }
                             }
                         }
                     }
-                    if let r = lastRun ?? model.store.runs(skillID: skill.id, limit: 1).first { RunView(run: r) }
-                    HStack {
-                        Text(v.compiler == "fixture" ? "Compiled by the fixture compiler, no API key" : "Compiled by \(v.compiler.replacingOccurrences(of: "nemotron:", with: ""))")
-                            .font(.system(size: 11)).foregroundStyle(v.compiler == "fixture" ? Theme.warning : Color.secondary).lineLimit(1)
-                        Spacer()
-                        Button(role: .destructive) { model.store.delete(skillID: skill.id) } label: { Image(systemName: "trash").font(.system(size: 11)) }
-                            .buttonStyle(.borderless).foregroundStyle(.tertiary)
-                    }
+                    Text(v.compiler == "fixture" ? "fixture compiler, no API key" : "compiled by \(v.compiler.replacingOccurrences(of: "nemotron:", with: ""))")
+                        .font(.system(size: 11)).foregroundStyle(.tertiary).lineLimit(1)
                 }
-                .padding(.horizontal, 10).padding(.bottom, 12)
+                .padding(.horizontal, 12).padding(.bottom, 14)
             }
         }
-        .background(RoundedRectangle(cornerRadius: Theme.radius).fill(expanded ? Theme.fill : .clear))
     }
 
-    private func runCount() -> Int? { model.store.runs(skillID: skill.id, limit: 50).filter { $0.purpose == "run" }.count }
-    private func statusText(_ s: VersionStatus) -> String {
-        switch s.rawValue {
-        case "needsLogin": return "Needs login"
-        case "needsReview": return "Needs review"
-        default: return s.rawValue.capitalized
+    private func statusText(active: SkillVersion?, latest: SkillVersion?) -> String {
+        if let active { return "v\(active.version) · verified" }
+        guard let latest else { return "" }
+        switch latest.status {
+        case .candidate: return "v\(latest.version) · not verified"
+        case .failedValidation: return "v\(latest.version) · replay failed"
+        case .validated: return "v\(latest.version) · verified"
         }
+    }
+
+    private func stepTarget(_ step: WorkflowStep) -> String {
+        if let t = step.target { return t.label ?? t.selector }
+        if let u = step.url { return u }
+        if let k = step.key { return k }
+        return step.value ?? ""
     }
 }
 
@@ -205,27 +210,43 @@ struct RunView: View {
     let run: RunRecord
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Caption(run.purpose == "validation" ? "Validation replay" : "Last result")
-            ForEach(run.outputs.sorted { $0.key < $1.key }, id: \.key) { k, v in
-                HStack(alignment: .top, spacing: 10) {
-                    Text(k).font(.system(size: 11.5, design: .monospaced)).foregroundStyle(.secondary).frame(width: 72, alignment: .leading)
-                    Text(v.text).font(.system(size: 12.5)).textSelection(.enabled)
+            HStack(spacing: 6) {
+                if run.status == .success { Image(systemName: "checkmark").font(.system(size: 11, weight: .semibold)) }
+                Text(statusWord).font(.system(size: 12.5, weight: .medium))
+                Text(meta).font(.system(size: 11)).foregroundStyle(.tertiary).lineLimit(1)
+            }
+            Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 4) {
+                ForEach(run.outputs.sorted { $0.key < $1.key }, id: \.key) { k, v in
+                    GridRow {
+                        Text(k).mono(11.5).foregroundStyle(.secondary)
+                        Text(v.text).font(.system(size: 13)).textSelection(.enabled).lineLimit(2)
+                    }
                 }
             }
-            if let e = run.error { Text(e).font(.system(size: 12)).foregroundStyle(Theme.danger).textSelection(.enabled) }
-            if run.status != .success, run.error == nil { StatusLabel(text: run.status.rawValue, color: run.status.isTerminal ? Theme.danger : Theme.accent) }
+            if !run.checks.isEmpty {
+                Text(run.checks.map { "✓ " + $0 }.joined(separator: "   ")).font(.system(size: 11)).foregroundStyle(.tertiary).lineLimit(2)
+            }
+            if let e = run.error { Text(e).font(.system(size: 12)).foregroundStyle(.secondary).textSelection(.enabled) }
+            if let shot = run.screenshot {
+                Button("Evidence screenshot") { NSWorkspace.shared.open(URL(fileURLWithPath: shot)) }
+                    .buttonStyle(.plain).font(.system(size: 12, weight: .medium)).foregroundStyle(Theme.accent)
+            }
         }
     }
-}
-
-struct StatusLabel: View {
-    let text: String
-    let color: Color
-    var body: some View {
-        HStack(spacing: 5) {
-            StatusDot(color: color, size: 6)
-            Text(text).font(.system(size: 11.5, weight: .medium)).foregroundStyle(color)
+    private var statusWord: String {
+        switch run.status {
+        case .success: return "Succeeded"
+        case .needsLogin: return "Needs login"
+        case .needsReview: return "Needs review"
+        case .queued, .running, .verifying: return "Running"
+        default: return run.status.rawValue.capitalized
         }
+    }
+    private var meta: String {
+        var parts = ["run \(run.id.prefix(7))"]
+        if let f = run.finished { parts.append(String(format: "%.1f s", f.timeIntervalSince(run.started))) }
+        parts.append(run.started.formatted(date: .omitted, time: .shortened))
+        return parts.joined(separator: " · ")
     }
 }
 
@@ -235,72 +256,112 @@ struct TeachPanel: View {
     @EnvironmentObject var model: AppModel
     @ObservedObject var recorder: Recorder
     @State private var hint = ""
+    @State private var started = Date()
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 14) {
                 if !recorder.teaching {
-                    Text("Teach a skill").font(.system(size: 13, weight: .semibold))
-                    Text("Open the page you start from, press Teach, do the task once and pick the result fields. The skill is replayed once before it is saved.")
-                        .font(.system(size: 12.5)).foregroundStyle(.secondary)
-                    Button("Start recording") { model.startTeaching() }.buttonStyle(PillButtonStyle(primary: true))
+                    Text("Teach a skill").font(.system(size: 14, weight: .medium))
+                    Text("Open the page you start from, press Teach a skill, do the task once and click the values you want back. The agent tab replays it before it is saved.")
+                        .font(.system(size: 13)).foregroundStyle(.secondary)
+                    Button("Start recording") { model.startTeaching(); started = Date() }.buttonStyle(AccentButtonStyle())
                 } else {
-                    HStack(spacing: 10) {
-                        StatusDot(color: Theme.danger, size: 8)
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("Recording").font(.system(size: 13, weight: .semibold))
-                            Text(recorder.actions.isEmpty ? "Use the site like you normally do" : (recorder.startURL.flatMap { URL(string: $0)?.host } ?? "")).font(.system(size: 11.5)).foregroundStyle(.secondary)
-                        }
+                    HStack(spacing: 8) {
+                        Circle().fill(Theme.accent).frame(width: 8, height: 8)
+                        Text("Recording from \(recorder.startURL.flatMap { URL(string: $0) }.map { ($0.host ?? "") + ($0.path == "/" ? "" : $0.path) } ?? "this page")")
+                            .font(.system(size: 12.5)).foregroundStyle(.secondary).lineLimit(1)
                         Spacer()
+                        TimelineView(.periodic(from: started, by: 1)) { ctx in
+                            Text(elapsed(ctx.date)).mono(11.5).foregroundStyle(.tertiary)
+                        }
                     }
-                    .padding(10).background(RoundedRectangle(cornerRadius: Theme.radius).fill(Theme.danger.opacity(0.10)))
                     Caption("Steps")
                     if recorder.actions.isEmpty {
-                        Text("Type, choose and click in the page. Each action shows up here.").font(.system(size: 12.5)).foregroundStyle(.secondary)
+                        Text("Type, choose and click in the page. Each action shows up here.").font(.system(size: 13)).foregroundStyle(.secondary)
                     }
-                    ForEach(Array(recorder.actions.enumerated()), id: \.element.id) { i, a in
-                        HStack(alignment: .top, spacing: 10) {
-                            Text("\(i + 1)").font(.system(size: 11, weight: .medium)).foregroundStyle(.secondary)
-                                .frame(width: 20, height: 20).background(Circle().fill(Theme.fill))
-                            Text(a.summary).font(.system(size: 12.5)).lineLimit(2)
-                            Spacer()
-                            Button { recorder.removeAction(a.id) } label: { Image(systemName: "xmark").font(.system(size: 10, weight: .medium)) }
-                                .buttonStyle(.borderless).foregroundStyle(.tertiary)
+                    VStack(alignment: .leading, spacing: 2) {
+                        ForEach(Array(recorder.actions.enumerated()), id: \.element.id) { i, a in
+                            StepLine(index: i + 1, action: a) { recorder.removeAction(a.id) }
                         }
                     }
-                    Caption("Results")
+                    Hairline()
+                    HStack {
+                        Caption("Results")
+                        Spacer()
+                        Text(recorder.picking ? "Click a value on the page" : "").font(.system(size: 11)).foregroundStyle(Theme.accent)
+                    }
                     ForEach($recorder.picked) { $p in
                         HStack(spacing: 10) {
-                            TextField("name", text: $p.name).textFieldStyle(.plain).font(.system(size: 11.5, design: .monospaced)).frame(width: 90)
-                            Text(p.sample).font(.system(size: 12.5)).lineLimit(1).foregroundStyle(.secondary)
+                            TextField("name", text: $p.name).textFieldStyle(.plain).mono(12)
+                                .padding(.horizontal, 10).frame(width: 130, height: 28)
+                                .background(RoundedRectangle(cornerRadius: Theme.rowRadius).fill(Theme.control))
+                            Text(p.sample).font(.system(size: 13)).lineLimit(1).foregroundStyle(.secondary)
                             Spacer()
                             Toggle("list", isOn: Binding(get: { p.many }, set: { on in
                                 p.many = on
                                 if let s = on ? p.listSelector : p.singleSelector { p.selector = s }
                             }))
-                            .toggleStyle(.checkbox).font(.system(size: 11)).foregroundStyle(.secondary).disabled(p.listSelector == nil)
+                            .toggleStyle(.checkbox).font(.system(size: 12)).foregroundStyle(.secondary).disabled(p.listSelector == nil)
                         }
-                        .padding(.horizontal, 10).frame(height: 30).background(RoundedRectangle(cornerRadius: Theme.rowRadius).fill(Theme.fill))
                     }
-                    Button { model.pickOutput() } label: {
-                        Label(recorder.picking ? "Click a result on the page" : "Pick a result on the page", systemImage: "scope")
-                    }
-                    .buttonStyle(PillButtonStyle(small: true)).disabled(recorder.picking)
-                    Caption("Name")
-                    TextField("What does this do?", text: $hint).textFieldStyle(.plain).font(.system(size: 12.5)).modifier(FieldChrome())
-                    HStack(spacing: 12) {
+                    Button(recorder.picked.isEmpty ? "Pick a result" : "Pick another result") { model.pickOutput() }
+                        .buttonStyle(ControlButtonStyle()).disabled(recorder.picking)
+                    Hairline()
+                    Caption("What does this do?")
+                    TextField("Look up order status", text: $hint).textFieldStyle(.plain).font(.system(size: 13)).modifier(FieldChrome())
+                    HStack(spacing: 14) {
                         Button(model.compiling ? "Saving" : "Save skill") { Task { await model.saveTeaching(hint: hint) } }
-                            .buttonStyle(PillButtonStyle(primary: true))
+                            .buttonStyle(AccentButtonStyle())
                             .disabled(model.compiling || recorder.actions.isEmpty || recorder.picked.isEmpty)
                         Button("Discard") { recorder.cancelTeaching() }.buttonStyle(PlainActionStyle())
                         Spacer()
                         if model.compiling { ProgressView().controlSize(.small) }
                     }
-                    Text(model.settings.hasModel ? "Replayed once before it is saved" : "No API key, so the fixture compiler is used and the skill is labeled fixture")
-                        .font(.system(size: 11.5)).foregroundStyle(model.settings.hasModel ? Color.secondary : Theme.warning)
+                    Text(model.settings.hasModel
+                         ? "Nemotron compiles the recording into typed steps. The agent tab replays it, and the skill is kept only if the replay passes its checks."
+                         : "No API key, so the fixture compiler turns the recording into typed steps. The agent tab replays it, and the skill is kept only if the replay passes its checks.")
+                        .font(.system(size: 11.5)).foregroundStyle(.tertiary).fixedSize(horizontal: false, vertical: true)
                 }
             }
-            .padding(.horizontal, 14).padding(.bottom, 14)
+            .padding(.horizontal, 12).padding(.bottom, 14)
+        }
+        .onAppear { if recorder.teaching { started = recorder.actions.first?.at ?? Date() } }
+    }
+
+    private func elapsed(_ now: Date) -> String {
+        let s = max(0, Int(now.timeIntervalSince(started)))
+        return String(format: "%d:%02d", s / 60, s % 60)
+    }
+}
+
+/// One recorded action: index, kind in mono, target, remove on hover.
+struct StepLine: View {
+    let index: Int
+    let action: RecordedAction
+    let remove: () -> Void
+    @State private var hover = false
+    var body: some View {
+        HStack(alignment: .firstTextBaseline, spacing: 8) {
+            Text("\(index)").mono(11).foregroundStyle(.tertiary).frame(width: 14, alignment: .trailing)
+            Text(action.type).mono(11.5).foregroundStyle(.secondary).frame(width: 54, alignment: .leading)
+            Text(target).font(.system(size: 13)).lineLimit(1).truncationMode(.middle)
+            Spacer(minLength: 4)
+            if hover {
+                Button(action: remove) { Image(systemName: "minus.circle").font(.system(size: 12)) }
+                    .buttonStyle(.borderless).foregroundStyle(.tertiary)
+            }
+        }
+        .padding(.horizontal, 8).frame(height: 28)
+        .background(RoundedRectangle(cornerRadius: Theme.rowRadius).fill(hover ? Theme.control : .clear))
+        .onHover { hover = $0 }
+    }
+    private var target: String {
+        switch action.type {
+        case "navigate": return URL(string: action.url).map { $0.path + ($0.query.map { "?" + $0 } ?? "") } ?? action.url
+        case "fill", "select": return "\(action.label ?? action.selector ?? "field") · \(action.secret ? "••••" : (action.value ?? ""))"
+        case "press": return "\(action.key ?? "key") in \(action.label ?? action.selector ?? "field")"
+        default: return action.label ?? action.selector ?? action.type
         }
     }
 }
@@ -309,6 +370,7 @@ struct TeachPanel: View {
 
 struct AssistantPanel: View {
     @ObservedObject var assistant: Assistant
+    @EnvironmentObject var model: AppModel
     @State private var text = ""
     @FocusState private var focused: Bool
     var body: some View {
@@ -317,47 +379,53 @@ struct AssistantPanel: View {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 10) {
                         if assistant.lines.isEmpty {
-                            Text("Ask about this page or run a skill. The assistant uses your saved skills first and can work any page through the same tools agents get over MCP.")
-                                .font(.system(size: 12.5)).foregroundStyle(.secondary)
+                            Text(model.settings.hasModel
+                                 ? "Ask about this page or run a skill. The assistant uses your saved skills first and can work any page through the same tools agents get over MCP."
+                                 : "Add a Nebius API key in Settings to use the assistant. Saved skills still run from the Skills panel and over MCP.")
+                                .font(.system(size: 13)).foregroundStyle(.secondary)
                         }
                         ForEach(assistant.lines) { line in
                             switch line.role {
                             case .user:
                                 Text(line.text).font(.system(size: 13)).padding(.horizontal, 12).padding(.vertical, 8)
-                                    .background(RoundedRectangle(cornerRadius: 12).fill(Theme.fillStrong))
+                                    .background(RoundedRectangle(cornerRadius: 10).fill(Theme.control))
                                     .frame(maxWidth: .infinity, alignment: .trailing).textSelection(.enabled).id(line.id)
                             case .tool:
-                                HStack(spacing: 8) {
-                                    Image(systemName: "terminal").font(.system(size: 10)).foregroundStyle(.tertiary)
-                                    Text(line.text).font(.system(size: 11, design: .monospaced)).foregroundStyle(.secondary).lineLimit(2)
+                                HStack(alignment: .firstTextBaseline, spacing: 6) {
+                                    Image(systemName: line.text.hasPrefix("→") || line.text.hasPrefix("->") ? "arrow.turn.down.left" : "arrow.turn.down.right").font(.system(size: 10)).foregroundStyle(.tertiary)
+                                    Text(line.text).mono(11.5).foregroundStyle(.secondary).lineLimit(3)
                                 }
                                 .id(line.id)
                             case .error:
-                                Text(line.text).font(.system(size: 12.5)).foregroundStyle(Theme.danger).textSelection(.enabled).id(line.id)
+                                Text(line.text).font(.system(size: 12.5)).foregroundStyle(.secondary).textSelection(.enabled).id(line.id)
                             default:
                                 Text(line.text).font(.system(size: 13)).textSelection(.enabled).id(line.id)
                             }
                         }
-                        if assistant.busy { ProgressView().controlSize(.small) }
+                        if assistant.busy {
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text("Working").font(.system(size: 12.5)).foregroundStyle(.secondary)
+                                ProgressView().progressViewStyle(.linear).tint(Theme.accent).frame(height: 2)
+                            }
+                        }
                     }
-                    .padding(.horizontal, 14).padding(.bottom, 10)
+                    .padding(.horizontal, 12).padding(.bottom, 10)
                 }
                 .onChange(of: assistant.lines.count) { _, _ in if let last = assistant.lines.last { withAnimation(Theme.quick) { proxy.scrollTo(last.id, anchor: .bottom) } } }
             }
-            HStack(spacing: 8) {
-                TextField("Ask about this page or run a skill", text: $text).textFieldStyle(.plain).font(.system(size: 12.5))
-                    .focused($focused).onSubmit(send)
-                Button(action: send) {
-                    Image(systemName: "arrow.up").font(.system(size: 11, weight: .bold)).foregroundStyle(.white)
-                        .frame(width: 24, height: 24).background(Circle().fill(text.isEmpty || assistant.busy ? Color.secondary.opacity(0.4) : Theme.accent))
+            HStack(spacing: 10) {
+                HStack(spacing: 8) {
+                    TextField("Ask Nemotron", text: $text).textFieldStyle(.plain).font(.system(size: 13))
+                        .focused($focused).onSubmit(send)
+                    Button(action: send) { Image(systemName: "return").font(.system(size: 11, weight: .medium)) }
+                        .buttonStyle(.borderless).foregroundStyle(text.isEmpty || assistant.busy ? AnyShapeStyle(.tertiary) : AnyShapeStyle(.primary))
+                        .disabled(text.isEmpty || assistant.busy)
                 }
-                .buttonStyle(.plain).disabled(text.isEmpty || assistant.busy)
+                .padding(.horizontal, 12).frame(height: 36)
+                .background(RoundedRectangle(cornerRadius: Theme.pillRadius).fill(Theme.control))
+                Button("Clear") { assistant.reset() }.buttonStyle(PlainActionStyle()).disabled(assistant.lines.isEmpty)
             }
-            .padding(.leading, 12).padding(.trailing, 6).frame(height: 38)
-            .background(RoundedRectangle(cornerRadius: 12).fill(Theme.fill))
-            .overlay(RoundedRectangle(cornerRadius: 12).stroke(focused ? Theme.accent.opacity(0.6) : Theme.hairline, lineWidth: 1))
-            .contextMenu { Button("Clear conversation") { assistant.reset() } }
-            .padding(14)
+            .padding(12)
         }
     }
 
@@ -374,60 +442,62 @@ struct AssistantPanel: View {
 struct SettingsPanel: View {
     @EnvironmentObject var model: AppModel
     @State var initial: AppSettings
+    @State private var savedAt: Date?
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 18) {
-                VStack(alignment: .leading, spacing: 6) {
-                    Caption("Models")
-                    SettingField(label: "Nebius API key", note: "Stored locally with mode 0600") { SecureField("", text: $initial.apiKey) }
-                    SettingField(label: "Base URL") { TextField("", text: $initial.baseURL) }
-                    SettingField(label: "Compiler") { TextField("", text: $initial.compilerModel) }
-                    SettingField(label: "Assistant") { TextField("", text: $initial.assistantModel) }
-                    SettingField(label: "Tavily key", note: "Optional, enables web_search") { SecureField("", text: $initial.tavilyKey) }
+            VStack(alignment: .leading, spacing: 10) {
+                Caption("Nemotron on Nebius Token Factory")
+                SettingsGroup {
+                    SettingRow("API key") { SecureField("Not set, fixture compiler in use", text: $initial.apiKey) }
+                    SettingRow("Base URL") { TextField("", text: $initial.baseURL).mono(12) }
+                    SettingRow("Compiler model") { TextField("", text: $initial.compilerModel).mono(12) }
+                    SettingRow("Assistant model") { TextField("", text: $initial.assistantModel).mono(12) }
                 }
-                VStack(alignment: .leading, spacing: 6) {
-                    Caption("MCP")
-                    SettingField(label: "Endpoint", note: "Loopback only, bearer token") {
-                        Text(model.mcp.endpoint.replacingOccurrences(of: "http://", with: "")).font(.system(size: 12, design: .monospaced)).foregroundStyle(.secondary).textSelection(.enabled)
+                Caption("Optional").padding(.top, 8)
+                SettingsGroup {
+                    SettingRow("Tavily API key") { SecureField("Not set, web_search is off", text: $initial.tavilyKey) }
+                    SettingRow("MCP port") { TextField("", value: $initial.mcpPort, format: .number.grouping(.never)).mono(12) }
+                }
+                HStack(spacing: 12) {
+                    Button("Save") { model.saveSettings(initial); savedAt = Date() }.buttonStyle(AccentButtonStyle())
+                    if let savedAt { Text("Saved \(savedAt.formatted(date: .omitted, time: .shortened))").font(.system(size: 12)).foregroundStyle(.tertiary) }
+                    Spacer()
+                    Button("Copy MCP config") {
+                        NSPasteboard.general.clearContents()
+                        NSPasteboard.general.setString(model.mcpConfigJSON, forType: .string)
+                        model.status = "Copied the MCP config. It contains the bearer token, so treat it like a password."
                     }
-                    SettingField(label: "Port") { TextField("", value: $initial.mcpPort, format: .number.grouping(.never)) }
-                    HStack(spacing: 8) {
-                        Button { NSWorkspace.shared.activateFileViewerSelecting([model.mcp.tokenFile]) } label: { Label("Reveal token", systemImage: "key") }
-                        Button {
-                            NSPasteboard.general.clearContents()
-                            NSPasteboard.general.setString(model.mcpConfigJSON, forType: .string)
-                            model.status = "Copied the MCP config. It contains the bearer token, so treat it like a password."
-                        } label: { Label("Copy Hermes config", systemImage: "doc.on.doc") }
-                    }
-                    .buttonStyle(PillButtonStyle(small: true))
+                    .buttonStyle(ControlButtonStyle())
                 }
-                VStack(alignment: .leading, spacing: 6) {
-                    Caption("Privacy")
-                    Text("Passwords and one-time codes are never recorded.").font(.system(size: 12.5)).foregroundStyle(.secondary)
-                    Text("Skills run in a hidden tab with your normal logins.").font(.system(size: 12.5)).foregroundStyle(.secondary)
-                    Text("NEBIUS_API_KEY in the environment overrides the saved key.").font(.system(size: 11.5)).foregroundStyle(.tertiary)
-                }
-                Button("Save") { model.saveSettings(initial) }.buttonStyle(PillButtonStyle(primary: true))
+                .padding(.top, 8)
+                Text("Stored at ~/Library/Application Support/BrowserSkills/settings.json with mode 0600. NEBIUS_API_KEY in the environment overrides the key. Passwords and one-time codes are never recorded; skills run in the agent tab with your normal logins.")
+                    .font(.system(size: 11.5)).foregroundStyle(.tertiary).fixedSize(horizontal: false, vertical: true).padding(.top, 6)
             }
-            .padding(.horizontal, 14).padding(.bottom, 14)
+            .padding(.horizontal, 12).padding(.bottom, 14)
         }
     }
 }
 
-struct SettingField<Content: View>: View {
-    let label: String
-    var note: String? = nil
+/// Rows on one control fill, separated by hairlines.
+struct SettingsGroup<Content: View>: View {
     @ViewBuilder let content: Content
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack(spacing: 6) {
-                Text(label).font(.system(size: 11.5, weight: .medium)).foregroundStyle(.secondary)
-                if let note { Text(note).font(.system(size: 11)).foregroundStyle(.tertiary).lineLimit(1) }
-            }
-            content.textFieldStyle(.plain).font(.system(size: 12.5)).lineLimit(1).truncationMode(.middle)
+        VStack(spacing: 0) { content }
+            .background(RoundedRectangle(cornerRadius: Theme.rowRadius).fill(Theme.control))
+    }
+}
+
+struct SettingRow<Content: View>: View {
+    let label: String
+    @ViewBuilder let content: Content
+    init(_ label: String, @ViewBuilder content: () -> Content) { self.label = label; self.content = content() }
+    var body: some View {
+        HStack(alignment: .firstTextBaseline, spacing: 12) {
+            Text(label).font(.system(size: 13)).frame(width: 110, alignment: .leading)
+            content.textFieldStyle(.plain).font(.system(size: 13)).lineLimit(1).truncationMode(.middle)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding(.horizontal, 10).padding(.vertical, 8)
-        .background(RoundedRectangle(cornerRadius: Theme.rowRadius).fill(Theme.fill))
+        .padding(.horizontal, 12).frame(minHeight: 36)
+        .overlay(alignment: .bottom) { Hairline().padding(.leading, 12) }
     }
 }

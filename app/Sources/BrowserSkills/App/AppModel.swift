@@ -90,6 +90,14 @@ final class AppModel: ObservableObject {
         if tabs.isEmpty { newTab(url: homeURL) }
     }
 
+    /// Closes every normal tab except the selected one.
+    func closeOthers() {
+        let keep = selected?.isAgent == false ? selected?.id : tabs.first?.id
+        tabs.removeAll { $0.id != keep }
+        if let keep { selectedID = keep }
+        if tabs.isEmpty { newTab(url: homeURL) }
+    }
+
     func go(_ text: String) {
         guard let tab = selected, !tab.isAgent else { return }
         typedLoads.insert(tab.id)
