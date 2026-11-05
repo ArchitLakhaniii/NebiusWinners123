@@ -12,6 +12,8 @@ enum Theme {
     static let control2 = adaptive(dark: "#ffffff", light: "#000000", darkAlpha: 0.13, lightAlpha: 0.11)
     static let hairline = adaptive(dark: "#ffffff", light: "#000000", darkAlpha: 0.10, lightAlpha: 0.09)
     static let page = Color(hex: "#fbfaf8")
+    /// Window fill laid over the blurred material so the desk reads as one dark (or warm light) surface.
+    static let window = adaptive(dark: "#1c1b1f", light: "#f3f0eb", darkAlpha: 0.78, lightAlpha: 0.84)
     static let sidebarWidth: CGFloat = 232
     static let panelWidth: CGFloat = 348
     static let inset: CGFloat = 10

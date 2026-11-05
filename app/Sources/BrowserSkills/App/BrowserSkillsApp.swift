@@ -1,6 +1,7 @@
 // Licensed under GPL-3.0. See LICENSE.
 
 import AppKit
+import ScreenCaptureKit
 import SwiftUI
 
 @main
@@ -41,23 +42,34 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { true }
 }
 
-/// Writes a PNG of the main window to BROWSERSKILLS_SNAPSHOT_DIR (or ~/Pictures/BrowserSkills).
-/// An app may capture its own windows without the screen recording permission.
+/// Writes a PNG of the main window to BROWSERSKILLS_SNAPSHOT_DIR (or ~/Pictures/BrowserSkills) through
+/// ScreenCaptureKit, filtered to this window only. Errors go to stderr; nothing else is shown.
 enum WindowSnapshot {
-    @discardableResult
-    static func save() -> URL? {
-        guard let window = NSApp.windows.first(where: { $0.isVisible && $0.frame.minX > -10000 && !($0 is NSPanel) }) else { return nil }
+    static func save() {
+        guard let window = NSApp.windows.first(where: { $0.isVisible && $0.frame.minX > -10000 && !($0 is NSPanel) }) else { return }
         let id = CGWindowID(window.windowNumber)
-        guard let image = CGWindowListCreateImage(.null, .optionIncludingWindow, id, [.boundsIgnoreFraming, .bestResolution]) else { return nil }
-        let rep = NSBitmapImageRep(cgImage: image)
-        guard let png = rep.representation(using: .png, properties: [:]) else { return nil }
-        let env = ProcessInfo.processInfo.environment["BROWSERSKILLS_SNAPSHOT_DIR"]
-        let dir = env.map { URL(fileURLWithPath: $0, isDirectory: true) }
-            ?? FileManager.default.urls(for: .picturesDirectory, in: .userDomainMask)[0].appendingPathComponent("BrowserSkills", isDirectory: true)
-        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
-        let stamp = ISO8601DateFormatter().string(from: Date()).replacingOccurrences(of: ":", with: "-")
-        let url = dir.appendingPathComponent("snapshot-\(stamp).png")
-        do { try png.write(to: url) } catch { return nil }
-        return url
+        let scale = window.backingScaleFactor
+        Task { @MainActor in
+            do {
+                let content = try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
+                guard let target = content.windows.first(where: { $0.windowID == id }) else { return }
+                let config = SCStreamConfiguration()
+                config.width = Int(target.frame.width * scale)
+                config.height = Int(target.frame.height * scale)
+                config.showsCursor = false
+                config.captureResolution = .best
+                let image = try await SCScreenshotManager.captureImage(contentFilter: SCContentFilter(desktopIndependentWindow: target), configuration: config)
+                let rep = NSBitmapImageRep(cgImage: image)
+                guard let png = rep.representation(using: .png, properties: [:]) else { return }
+                let env = ProcessInfo.processInfo.environment["BROWSERSKILLS_SNAPSHOT_DIR"]
+                let dir = env.map { URL(fileURLWithPath: $0, isDirectory: true) }
+                    ?? FileManager.default.urls(for: .picturesDirectory, in: .userDomainMask)[0].appendingPathComponent("BrowserSkills", isDirectory: true)
+                try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+                let stamp = ISO8601DateFormatter().string(from: Date()).replacingOccurrences(of: ":", with: "-")
+                try png.write(to: dir.appendingPathComponent("snapshot-\(stamp).png"))
+            } catch {
+                FileHandle.standardError.write(Data("snapshot failed: \(error)\n".utf8))
+            }
+        }
     }
 }

@@ -30,7 +30,10 @@ struct ContentView: View {
             }
         }
         .ignoresSafeArea()
-        .background(Material(material: .sidebar, blending: .behindWindow).ignoresSafeArea())
+        .background {
+            Material(material: .sidebar, blending: .behindWindow).ignoresSafeArea()
+            Theme.window.ignoresSafeArea()
+        }
         .animation(Theme.panelMotion, value: model.panelVisible)
     }
 }
@@ -112,8 +115,8 @@ struct AddressPill: View {
                     .onSubmit { model.go(text); stop() }
                     .onExitCommand { stop() }
             } else {
-                Text(host).font(.system(size: 13, weight: .medium)).lineLimit(1)
-                Text(path).font(.system(size: 13)).foregroundStyle(.tertiary).lineLimit(1).truncationMode(.middle)
+                Text(host).font(.system(size: 13, weight: .medium)).lineLimit(1).layoutPriority(1)
+                Text(path).font(.system(size: 13)).foregroundStyle(.tertiary).lineLimit(1).truncationMode(.tail)
                 Spacer(minLength: 0)
                 if tab.isLoading {
                     ProgressView().controlSize(.mini)

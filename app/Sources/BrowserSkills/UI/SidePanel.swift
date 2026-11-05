@@ -448,10 +448,10 @@ struct SettingsPanel: View {
             VStack(alignment: .leading, spacing: 10) {
                 Caption("Nemotron on Nebius Token Factory")
                 SettingsGroup {
-                    SettingRow("API key") { SecureField("Not set, fixture compiler in use", text: $initial.apiKey) }
-                    SettingRow("Base URL") { TextField("", text: $initial.baseURL).mono(12) }
-                    SettingRow("Compiler model") { TextField("", text: $initial.compilerModel).mono(12) }
-                    SettingRow("Assistant model") { TextField("", text: $initial.assistantModel).mono(12) }
+                    SettingRow("API key") { SecureField("Not set, fixture mode", text: $initial.apiKey) }
+                    SettingRow("Base URL") { TextField("", text: $initial.baseURL, axis: .vertical).mono(12) }
+                    SettingRow("Compiler model") { TextField("", text: $initial.compilerModel, axis: .vertical).mono(12) }
+                    SettingRow("Assistant model") { TextField("", text: $initial.assistantModel, axis: .vertical).mono(12) }
                 }
                 Caption("Optional").padding(.top, 8)
                 SettingsGroup {
@@ -494,10 +494,10 @@ struct SettingRow<Content: View>: View {
     var body: some View {
         HStack(alignment: .firstTextBaseline, spacing: 12) {
             Text(label).font(.system(size: 13)).frame(width: 110, alignment: .leading)
-            content.textFieldStyle(.plain).font(.system(size: 13)).lineLimit(1).truncationMode(.middle)
+            content.textFieldStyle(.plain).font(.system(size: 13)).lineLimit(1...3)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding(.horizontal, 12).frame(minHeight: 36)
+        .padding(.horizontal, 12).padding(.vertical, 9).frame(minHeight: 36)
         .overlay(alignment: .bottom) { Hairline().padding(.leading, 12) }
     }
 }
