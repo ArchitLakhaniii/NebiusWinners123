@@ -31,6 +31,7 @@ final class BrowserTab: NSObject, ObservableObject, Identifiable, WKNavigationDe
     private(set) var lastLoadFailed = false
     private var loadWaiters: [(id: Int, since: Int, cont: CheckedContinuation<Bool, Never>)] = []
     private var nextWaiterID = 0
+    private var titleObservation: NSKeyValueObservation?
 
     init(isAgent: Bool = false) {
         self.isAgent = isAgent
@@ -48,6 +49,9 @@ final class BrowserTab: NSObject, ObservableObject, Identifiable, WKNavigationDe
         controller.add(proxy, contentWorld: Scripts.world, name: Scripts.pickerHandler)
         webView.navigationDelegate = self
         webView.uiDelegate = self
+        titleObservation = webView.observe(\.title) { [weak self] _, _ in
+            Task { @MainActor [weak self] in self?.syncState() }
+        }
     }
 
     func load(_ url: URL) {

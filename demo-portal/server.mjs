@@ -30,46 +30,60 @@ function inventory(q) {
   });
 }
 
-const page = (title, body) => `<!doctype html><html><head><meta charset="utf-8"><title>${esc(title)} · Acme Portal</title>
-<style>body{font:15px -apple-system,system-ui,sans-serif;max-width:760px;margin:40px auto;padding:0 20px;color:#1d1d1f}
-nav a{margin-right:16px;color:#76b900;font-weight:600;text-decoration:none}h1{font-size:26px}form{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
-input,select,button{font:inherit;padding:8px 10px;border:1px solid #ccc;border-radius:8px}button{background:#76b900;color:#fff;border:0;font-weight:600;cursor:pointer}
-.card{border:1px solid #e5e5e5;border-radius:12px;padding:16px;margin:12px 0}dt{color:#666;font-size:13px}dd{margin:0 0 10px;font-size:17px;font-weight:600}
-table{border-collapse:collapse;width:100%}td,th{text-align:left;padding:8px;border-bottom:1px solid #eee}</style></head>
-<body><nav><a href="/">Acme Portal</a><a href="/orders">Order status</a><a href="/flights">Flight status</a><a href="/inventory">Inventory</a></nav>
-<h1>${esc(title)}</h1>${body}<p style="color:#999;font-size:12px;margin-top:40px">Demo data changes every minute.</p></body></html>`;
+const page = (title, body) => `<!doctype html><html><head><meta charset="utf-8"><title>${title === 'Northwind' ? 'Northwind' : esc(title) + ' · Northwind'}</title>
+<style>:root{color-scheme:light;--ink:#1f3a5f;--text:#1a1a1c;--text2:#6b6b70;--line:#e7e5e1;--page:#fbfaf8}
+body{font:15px/1.45 -apple-system,system-ui,sans-serif;margin:0;color:var(--text);background:var(--page)}
+nav{display:flex;align-items:center;gap:28px;padding:0 36px;height:62px;border-bottom:1px solid var(--line)}
+nav a{color:var(--text2);text-decoration:none;font-size:15px}nav a:hover{color:var(--text)}
+nav a:first-child{color:var(--ink);font:400 26px/1 Georgia,"Times New Roman",serif;letter-spacing:-0.01em;margin-right:14px}
+nav span{margin-left:auto;color:var(--text2);font-size:14px}
+main{max-width:860px;margin:0 auto;padding:40px 36px 56px}h1{font-size:22px;font-weight:500;margin:0 0 6px}
+.lede{color:var(--text2);margin:0 0 22px}label{display:block;color:var(--text);font-size:14px;margin-bottom:8px}
+form{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin:0 0 32px}form>div{display:flex;flex-direction:column}
+input,select,button{font:inherit;padding:10px 14px;border:1px solid #d9d7d2;border-radius:7px;background:#fff;height:42px;box-sizing:border-box}
+input{min-width:300px}input:focus,select:focus{outline:2px solid var(--ink);outline-offset:-1px}
+button{background:var(--ink);color:#fff;border:0;font-weight:500;cursor:pointer;padding:0 18px}button:hover{background:#294a75}
+.card{margin:8px 0 0}.eyebrow{color:var(--text2);font-size:14px;margin:0 0 4px}
+.headline{font:400 48px/1.1 Georgia,"Times New Roman",serif;margin:0 0 22px;letter-spacing:-0.01em}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,max-content));gap:28px}
+.facts dt{color:var(--text2);font-size:14px;margin-bottom:4px}.facts dd{margin:0;font-size:17px}
+table{border-collapse:collapse;width:100%}td,th{text-align:left;padding:12px 8px;border-bottom:1px solid var(--line)}th{color:var(--text2);font-weight:500;font-size:13px}
+ul{padding-left:18px}li{margin:6px 0}a{color:var(--ink)}
+.note{color:var(--text2);font-size:13px;margin-top:40px}</style></head>
+<body><nav><a href="/">Northwind</a><a href="/orders">Orders</a><a href="/flights">Flights</a><a href="/inventory">Inventory</a><span>ops@northwind.example</span></nav>
+<main><h1>${esc(title)}</h1>${body}<p class="note">Demo data changes every minute.</p></main></body></html>`;
 
 const routes = {
-  '/': () => page('Acme Portal', `<p>Three lookups people repeat every day. Do one twice in BrowserSkills and it will offer to cache it as a skill.</p>
-    <ul><li><a href="/orders">Order status</a> — order number → status, carrier, ETA</li>
-    <li><a href="/flights">Flight status</a> — airline + flight → state, gate</li>
-    <li><a href="/inventory">Inventory search</a> — keyword → products with live price and stock</li></ul>`),
+  '/': () => page('Northwind', `<p class="lede">Three lookups people repeat every day. Do one twice in BrowserSkills and it offers to save it as a skill.</p>
+    <ul><li><a href="/orders">Order status</a>: order number to status, carrier, ETA</li>
+    <li><a href="/flights">Flight status</a>: airline and flight to state, gate</li>
+    <li><a href="/inventory">Inventory search</a>: keyword to products with live price and stock</li></ul>`),
   '/orders': (q) => {
     const id = (q.get('order') || '').trim();
-    const form = `<form action="/orders" method="get"><label for="order">Order number</label>
-      <input id="order" name="order" placeholder="e.g. A-1042" value="${esc(id)}" required><button type="submit">Look up</button></form>`;
+    const form = `<p class="lede">Enter an order number to see where it is.</p><form action="/orders" method="get"><div><label for="order">Order number</label>
+      <input id="order" name="order" placeholder="e.g. A-1042" value="${esc(id)}" required></div><button type="submit">Look up</button></form>`;
     if (!id) return page('Order status', form);
     const o = order(id);
-    return page('Order status', form + `<div class="card" id="order-result"><dl>
-      <dt>Order</dt><dd id="order-id">${esc(o.id)}</dd><dt>Status</dt><dd id="order-status">${o.status}</dd>
-      <dt>Carrier</dt><dd id="order-carrier">${o.carrier}</dd><dt>Estimated delivery</dt><dd id="order-eta">${o.eta}</dd>
-      <dt>Total</dt><dd id="order-total">${o.total}</dd></dl></div>`);
+    return page('Order status', form + `<div class="card" id="order-result"><p class="eyebrow">Order <span id="order-id">${esc(o.id)}</span></p>
+      <p class="headline" id="order-status">${o.status}</p><dl class="facts">
+      <div><dt>Carrier</dt><dd id="order-carrier">${o.carrier}</dd></div><div><dt>Estimated delivery</dt><dd id="order-eta">${o.eta}</dd></div>
+      <div><dt>Total</dt><dd id="order-total">${o.total}</dd></div></dl></div>`);
   },
   '/flights': (q) => {
     const airline = q.get('airline') || '', number = (q.get('number') || '').trim();
     const opts = ['NV', 'UA', 'DL', 'AA', 'BA'].map((a) => `<option value="${a}" ${a === airline ? 'selected' : ''}>${a}</option>`).join('');
-    const form = `<form action="/flights" method="get"><label for="airline">Airline</label><select id="airline" name="airline">${opts}</select>
-      <label for="number">Flight number</label><input id="number" name="number" placeholder="e.g. 204" value="${esc(number)}" required>
+    const form = `<p class="lede">Pick the airline and enter the flight number.</p><form action="/flights" method="get"><div><label for="airline">Airline</label><select id="airline" name="airline">${opts}</select></div>
+      <div><label for="number">Flight number</label><input id="number" name="number" placeholder="e.g. 204" value="${esc(number)}" required></div>
       <button type="submit">Check flight</button></form>`;
     if (!number) return page('Flight status', form);
     const f = flight(airline, number);
-    return page('Flight status', form + `<div class="card"><dl><dt>Flight</dt><dd id="flight-name">${esc(f.flight)}</dd>
-      <dt>Status</dt><dd id="flight-state">${f.state}</dd><dt>Gate</dt><dd id="flight-gate">${f.gate}</dd>
-      <dt>Terminal</dt><dd id="flight-terminal">${f.terminal}</dd></dl></div>`);
+    return page('Flight status', form + `<div class="card"><p class="eyebrow">Flight <span id="flight-name">${esc(f.flight)}</span></p>
+      <p class="headline" id="flight-state">${f.state}</p><dl class="facts">
+      <div><dt>Gate</dt><dd id="flight-gate">${f.gate}</dd></div><div><dt>Terminal</dt><dd id="flight-terminal">${f.terminal}</dd></div></dl></div>`);
   },
   '/inventory': (q) => {
     const term = (q.get('q') || '').trim();
-    const form = `<form action="/inventory" method="get"><input name="q" aria-label="Search products" placeholder="Search products" value="${esc(term)}" required>
+    const form = `<p class="lede">Live price and stock for every product that matches.</p><form action="/inventory" method="get"><div><label for="q">Search products</label><input id="q" name="q" placeholder="e.g. RTX" value="${esc(term)}" required></div>
       <button type="submit">Search</button></form>`;
     if (!term) return page('Inventory', form);
     const rows = inventory(term);

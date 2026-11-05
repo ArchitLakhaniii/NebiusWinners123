@@ -65,7 +65,8 @@ final class Recorder: ObservableObject {
         let many = (body["listCount"] as? Int ?? 1) > 1 && listSelector != nil
         var name = Self.snake(label.isEmpty ? "result" : label)
         if picked.contains(where: { $0.name == name }) { name += "_\(picked.count + 1)" }
-        picked.append(PickedOutput(name: name, selector: many ? listSelector! : selector, sample: body["text"] as? String ?? "", many: many))
+        picked.append(PickedOutput(name: name, selector: many ? listSelector! : selector, sample: body["text"] as? String ?? "", many: many,
+                                   singleSelector: selector, listSelector: listSelector))
     }
 
     // MARK: Observation
