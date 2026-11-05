@@ -26,8 +26,10 @@ struct BrowserSkillsApp: App {
                 Button("Teach") { model.show(.teach) }.keyboardShortcut("2", modifiers: [.command, .option])
                 Button("Assistant") { model.show(.assistant) }.keyboardShortcut("j")
                 Button("Settings") { model.show(.settings) }.keyboardShortcut(",")
-                Divider()
-                Button("Save Window Snapshot") { WindowSnapshot.save() }.keyboardShortcut("s", modifiers: [.command, .option])
+                if ProcessInfo.processInfo.environment["BROWSERSKILLS_SNAPSHOT_DIR"] != nil {
+                    Divider()
+                    Button("Save Window Snapshot") { WindowSnapshot.save() }.keyboardShortcut("s", modifiers: [.command, .option])
+                }
             }
         }
     }

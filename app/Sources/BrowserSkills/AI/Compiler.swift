@@ -195,13 +195,18 @@ enum Compiler {
             }
         }
         let host = URL(string: origin)?.host?.replacingOccurrences(of: "www.", with: "") ?? "site"
-        let base = Recorder.snake(demo.hint.isEmpty ? "\(inputs.first?.name ?? "run")_on_\(host)" : demo.hint)
         let outputs = demo.outputs.map {
             WorkflowOutput(name: $0.name, description: $0.sample.isEmpty ? $0.name : "e.g. \($0.sample.prefix(60))", selector: $0.selector, many: $0.many)
         }
+        // Without a hint the title reads like the task: "Order number to status", or "Status on northwind.example".
+        let got = outputs.map { $0.name.replacingOccurrences(of: "_", with: " ") }.joined(separator: ", ")
+        let defaultTitle = inputs.first.map { "\($0.description.prefix(1).capitalized)\($0.description.dropFirst()) to \(got)" }
+            ?? "\(got.prefix(1).capitalized)\(got.dropFirst()) on \(host)"
+        let title = demo.hint.isEmpty ? defaultTitle : demo.hint
+        let base = Recorder.snake(title)
         let workflow = Workflow(
             name: String(base.prefix(48)),
-            title: demo.hint.isEmpty ? "Look up \(inputs.map(\.name).joined(separator: ", ")) on \(host)" : demo.hint,
+            title: title,
             description: "Repeats the recorded procedure on \(host) and returns \(outputs.map(\.name).joined(separator: ", ")).",
             origin: origin, inputs: inputs, steps: steps, outputs: outputs,
             verify: outputs.map { VerifyCheck(kind: .nonEmpty, output: $0.name, input: nil) })

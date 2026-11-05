@@ -41,7 +41,7 @@ cd app && swift test        # unit tests
 ### Demo (2 minutes)
 
 1. In the app, open **Order status** on the demo portal, look up `A-1042`, then look up `B-77`.
-   A banner says *"You've done this 2× on 127.0.0.1"* → **Save as skill** → click the *Status* and *ETA*
+   A strip above the page says *"You did this twice on 127.0.0.1"* → **Save as skill** → click the *Status* and *ETA*
    values → **Save skill**. Watch the agent tab replay and verify it.
 2. Connect an agent: **Skills → Copy MCP config**, paste into Claude Code / Cursor, or use the stdio bridge:
    ```bash
